@@ -12,9 +12,9 @@ export default function Navbar() {
           <Image
             src="https://firebasestorage.googleapis.com/v0/b/kleingroepe-site.firebasestorage.app/o/baptiste-logo.png?alt=media&token=6de2241a-2f31-4c2d-8944-b224beac56a1"
             alt="Kerk Logo"
-            width={156} // Adjusted for a 50px height based on original 218x70 ratio
-            height={50}
-            className="h-[50px] w-auto" // Explicit height, width auto to maintain aspect ratio
+            width={174} 
+            height={56}
+            className="h-14 w-auto" // Explicit height (3.5rem = 56px), width auto to maintain aspect ratio
             priority // Preload logo as it's LCP
           />
         </Link>
