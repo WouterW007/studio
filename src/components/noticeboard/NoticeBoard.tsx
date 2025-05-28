@@ -40,21 +40,23 @@ export default function NoticeBoard({ announcements }: NoticeBoardProps) {
         <ScrollArea className="h-72"> {/* Max height with scroll */}
           <div className="space-y-4 pr-4">
             {announcements.map(announcement => (
-              <div 
-                key={announcement.id} 
-                className="p-4 border border-border rounded-lg bg-primary hover:bg-background transition-colors"
+              <div
+                key={announcement.id}
+                className="p-4 border border-neutral-300 rounded-lg bg-white hover:bg-background hover:border-primary transition-colors group"
               >
                 <div className="flex justify-between items-start mb-1">
-                  <h4 className="font-semibold text-md">{announcement.title}</h4>
+                  <h4 className="font-semibold text-md text-neutral-900 group-hover:text-white">{announcement.title}</h4>
                   {announcement.category && (
-                    <Badge variant="outline" className="text-xs flex items-center">
+                    <Badge 
+                      className="text-xs flex items-center bg-neutral-100 text-neutral-600 border-neutral-200 group-hover:bg-primary/20 group-hover:text-white group-hover:border-primary"
+                    >
                        {getCategoryIcon(announcement.category)}
                       {announcement.category}
                     </Badge>
                   )}
                 </div>
-                <p className="text-sm text-foreground mb-2">{announcement.content}</p>
-                <p className="text-xs text-foreground/70">
+                <p className="text-sm text-neutral-700 group-hover:text-neutral-100 mb-2">{announcement.content}</p>
+                <p className="text-xs text-neutral-500 group-hover:text-neutral-300">
                   Gepos: {new Date(announcement.date).toLocaleDateString('af-ZA', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
