@@ -9,8 +9,7 @@ export default function RegisterGroupPage() {
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-primary">Registreer 'n Nuwe Kleingroep</CardTitle>
           <CardDescription className="text-lg">
-            Voltooi asseblief die onderstaande vorm om jou groep by die {`kerk.co.za`} Kleingroepe-gids te voeg.
-            Alle groepe word eers goedgekeur voordat dit publiek sigbaar word.
+            registreer jou kleingroep hier.
           </CardDescription>
         </CardHeader>
         <CardContent>
