@@ -20,6 +20,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: APP_NAME,
   description: 'Vind en sluit aan by Kleingroepe in jou area.',
+  icons: {
+    icon: 'https://firebasestorage.googleapis.com/v0/b/kleingroepe-site.firebasestorage.app/o/baptiste-logo.png?alt=media&token=6de2241a-2f31-4c2d-8944-b224beac56a1',
+  },
 };
 
 export default function RootLayout({
@@ -40,5 +43,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-    
