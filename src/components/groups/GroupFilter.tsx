@@ -66,50 +66,46 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
   }
 
   return (
-    <Card className="shadow-lg sticky top-20">
+    <Card className='shadow-lg sticky top-20'>
       <CardHeader>
-        <CardTitle className="flex items-center text-xl"><SlidersHorizontal className="mr-2 h-5 w-5 text-primary" /> Filter Groepe</CardTitle>
+        <CardTitle className='flex items-center text-xl'>
+          <SlidersHorizontal className='mr-2 h-5 w-5 text-primary' /> Filter Groepe
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className='space-y-6'>
           <div>
-            <Label htmlFor="area">Area / Ligging</Label>
-            <Select name="area" onValueChange={handleSelectChange("area")} value={filters.area || ALL_FILTER_VALUE}>
-              <SelectTrigger id="area">
-                <SelectValue placeholder="Alle Areas" />
+            <Label htmlFor='area'>Area / Ligging</Label>
+            <Select name='area' onValueChange={handleSelectChange('area')} value={filters.area || ALL_FILTER_VALUE}>
+              <SelectTrigger id='area'>
+                <SelectValue placeholder='Alle Areas' />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={ALL_FILTER_VALUE}>Alle Areas</SelectItem>
-                {AREAS.map(area => (
-                  <SelectItem key={area} value={area}>{area}</SelectItem>
-                ))}
+                {AREAS.map(area => (<SelectItem key={area} value={area}>{area}</SelectItem>))}
               </SelectContent>
             </Select>
           </div>
-
           <div>
-            <Label htmlFor="primaryFocus">Primêre Fokus</Label>
-            <Select name="primaryFocus" onValueChange={handleSelectChange("primaryFocus")} value={filters.primaryFocus || ALL_FILTER_VALUE}>
-              <SelectTrigger id="primaryFocus">
-                <SelectValue placeholder="Alle Fokusse" />
+            <Label htmlFor='primaryFocus'>Primêre Fokus</Label>
+            <Select name='primaryFocus' onValueChange={handleSelectChange('primaryFocus')} value={filters.primaryFocus || ALL_FILTER_VALUE}>
+              <SelectTrigger id='primaryFocus'>
+                <SelectValue placeholder='Alle fokusgroepe' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL_FILTER_VALUE}>Alle Fokusse</SelectItem>
-                {FOCUS_CATEGORIES.map(cat => (
-                  <SelectItem key={cat.key} value={cat.key}>{cat.name}</SelectItem>
-                ))}
+                <SelectItem value={ALL_FILTER_VALUE}>Alle fokusgroepe</SelectItem>
+                {FOCUS_CATEGORIES.map(cat => (<SelectItem key={cat.key} value={cat.key}>{cat.name}</SelectItem>))}
               </SelectContent>
             </Select>
           </div>
-
           <div>
-            <Label htmlFor="targetAudience">Teikengehoor</Label>
+            <Label htmlFor='targetAudience'>Teikengehoor</Label>
             <Select name="targetAudience" onValueChange={handleSelectChange("targetAudience")} value={filters.targetAudience || ALL_FILTER_VALUE}>
-              <SelectTrigger id="targetAudience">
-                <SelectValue placeholder="Alle Gehore" />
+              <SelectTrigger id='targetAudience'>
+                <SelectValue placeholder='Almal' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL_FILTER_VALUE}>Alle Gehore</SelectItem>
+                <SelectItem value={ALL_FILTER_VALUE}>Almal</SelectItem>
                 {TARGET_AUDIENCES.map(aud => (
                   <SelectItem key={aud} value={aud}>{aud}</SelectItem>
                 ))}
@@ -118,8 +114,8 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
           </div>
 
           <div>
-            <Label htmlFor="meetingDay">Dag van die Week</Label>
-            <Select name="meetingDay" onValueChange={handleSelectChange("meetingDay")} value={filters.meetingDay || ALL_FILTER_VALUE}>
+            <Label htmlFor='meetingDay'>Dag van die Week</Label>
+            <Select name='meetingDay' onValueChange={handleSelectChange('meetingDay')} value={filters.meetingDay || ALL_FILTER_VALUE}>
               <SelectTrigger id="meetingDay">
                 <SelectValue placeholder="Alle Dae" />
               </SelectTrigger>
@@ -133,8 +129,8 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
           </div>
 
           <div>
-            <Label htmlFor="meetingTime">Tyd van die Dag</Label>
-            <Select name="meetingTime" onValueChange={handleSelectChange("meetingTime")} value={filters.meetingTime || ALL_FILTER_VALUE}>
+            <Label htmlFor='meetingTime'>Tyd van die Dag</Label>
+            <Select name='meetingTime' onValueChange={handleSelectChange('meetingTime')} value={filters.meetingTime || ALL_FILTER_VALUE}>
               <SelectTrigger id="meetingTime">
                 <SelectValue placeholder="Alle Tye" />
               </SelectTrigger>
@@ -148,8 +144,8 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
           </div>
 
           <div>
-            <Label htmlFor="meetingType">Vergadertipe</Label>
-            <Select name="meetingType" onValueChange={handleSelectChange("meetingType")} value={filters.meetingType || ALL_FILTER_VALUE}>
+            <Label htmlFor='meetingType'>Vergadertipe</Label>
+            <Select name='meetingType' onValueChange={handleSelectChange('meetingType')} value={filters.meetingType || ALL_FILTER_VALUE}>
               <SelectTrigger id="meetingType">
                 <SelectValue placeholder="Alle Tipes" />
               </SelectTrigger>
@@ -163,8 +159,8 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
           </div>
           
           <div>
-            <Label htmlFor="childcare">Kinder Toesig</Label>
-            <Select name="childcare" onValueChange={handleChildcareChange} value={filters.childcare === undefined ? "any" : filters.childcare}>
+            <Label htmlFor='childcare'>Kinder Toesig</Label>
+            <Select name='childcare' onValueChange={handleChildcareChange} value={filters.childcare === undefined ? 'any' : filters.childcare}>
               <SelectTrigger id="childcare">
                 <SelectValue placeholder="Enige" />
               </SelectTrigger>
@@ -177,10 +173,10 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
           </div>
 
           <div className="flex space-x-2 pt-2">
-            <Button type="submit" className="flex-1 bg-background text-foreground hover:bg-background/90 border border-primary">
+            <Button type='submit' className='flex-1 bg-background text-foreground hover:bg-background/90 border border-primary'>
               <SlidersHorizontal className="mr-2 h-4 w-4" /> Pas Filters Toe
             </Button>
-            <Button type="button" onClick={handleReset} title="Stel filters terug" className="bg-background text-foreground hover:bg-background/90 border border-primary">
+            <Button type='button' onClick={handleReset} title='Stel filters terug' className='bg-background text-foreground hover:bg-background/90 border border-primary'>
               <RotateCcw className="h-4 w-4" />
             </Button>
           </div>

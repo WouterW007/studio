@@ -43,7 +43,6 @@ const groupFormSchema = z.object({
   meetingTime: z.enum(MEETING_TIMES as [MeetingTime, ...MeetingTime[]], { required_error: "Kies 'n vergadertyd." }),
   meetingFrequency: z.string().min(1, "Kies 'n vergaderfrekwensie."),
   meetingType: z.enum(MEETING_TYPES as [MeetingType, ...MeetingType[]], { required_error: "Kies 'n vergadertipe." }),
-  targetAudience: z.enum(TARGET_AUDIENCES as [TargetAudience, ...TargetAudience[]], { required_error: "Kies 'n teikengehoor." }),
   childcareAvailable: z.boolean().default(false),
   location: z.string().min(3, "Ligging moet ten minste 3 karakters lank wees."),
   primaryFocus: z.custom<FocusCategoryKey>(val => FOCUS_CATEGORIES.some(fc => fc.key === val), {message: "Kies 'n primêre fokus."}),
@@ -52,7 +51,20 @@ const groupFormSchema = z.object({
   description: z.string().max(500, "Beskrywing mag nie meer as 500 karakters wees nie.").optional(),
   expiryDate: z.date().optional(),
 });
+// Define options for targetAudience explicitly with values and labels
+const targetAudienceOptions = [
+  { value: "Men", label: "Mans" },
+  { value: "Women", label: "Vroue" },
+  { value: "Mixed Adults", label: "Gemengde Volwassenes" },
+  { value: "Young Adults (18-25)", label: "Jong Volwassenes (18-25)" },
+  { value: "Youth (12-17)", label: "Jeug (12-17)" },
+  { value: "Seniors (60+)", label: "Seniors (60+)" },
+  { value: "Families", label: "Gesinne" },
+];
 
+// Extract values for zod enum validation
+const targetAudienceValues = targetAudienceOptions.map(option => option.value);
+groupFormSchema.extend({ targetAudience: z.enum(targetAudienceValues as [TargetAudience, ...TargetAudience[]], { required_error: "Kies 'n teikengehoor." }), });
 type GroupFormValues = z.infer<typeof groupFormSchema>;
 
 const defaultValues: Partial<GroupFormValues> = {
@@ -237,8 +249,14 @@ export function GroupForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {TARGET_AUDIENCES.map(audience => (
-                      <SelectItem key={audience} value={audience}>{audience}</SelectItem>
+                    {/* Use the new targetAudienceOptions array */}
+                    {targetAudienceOptions.map((audience) => (
+                      <SelectItem
+                        key={audience.value} // Use value as key for consistency
+                        value={audience.value}
+                      >
+                        {audience.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
