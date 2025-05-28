@@ -42,7 +42,7 @@ export default function NoticeBoard({ announcements }: NoticeBoardProps) {
             {announcements.map(announcement => (
               <div 
                 key={announcement.id} 
-                className="p-4 border border-border rounded-lg bg-teal-600 hover:bg-background transition-colors"
+                className="p-4 border border-border rounded-lg bg-primary hover:bg-background transition-colors"
               >
                 <div className="flex justify-between items-start mb-1">
                   <h4 className="font-semibold text-md">{announcement.title}</h4>
