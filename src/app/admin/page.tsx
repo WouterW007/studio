@@ -8,7 +8,7 @@ import { MOCK_GROUPS } from '@/data/mockData'; // In real app, fetch from DB and
 import type { Group } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ShieldCheck, LogOut, Loader2 } from 'lucide-react';
+import { ShieldCheck, LogOut, Loader2, AlertTriangle } from 'lucide-react'; // Added AlertTriangle
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminPage() {
