@@ -9,50 +9,50 @@ body {
 @layer base {
   :root {
     --background: 200 100% 11%; /* #002B3A */
-    --foreground: 15 70% 50%; /* #D65027 */
+    --foreground: 0 0% 100%; /* #FFFFFF */
 
-    --card: 210 100% 12%; /* #001D3D - A darker blue from previous palette */
-    --card-foreground: 15 70% 50%; /* #D65027 */
+    --card: 15 70% 50%; /* #D65027 */
+    --card-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --popover: 210 100% 12%; /* #001D3D */
-    --popover-foreground: 15 70% 50%; /* #D65027 */
+    --popover: 15 70% 50%; /* #D65027 */
+    --popover-foreground: 0 0% 100%; /* #FFFFFF */
 
     --primary: 15 70% 50%; /* #D65027 */
-    --primary-foreground: 0 0% 100%; /* White for good contrast on orange */
+    --primary-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --secondary: 210 100% 20%; /* #003566 - Another blue from previous palette */
-    --secondary-foreground: 15 70% 50%; /* #D65027 */
+    --secondary: 15 70% 50%; /* #D65027 */
+    --secondary-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --muted: 210 100% 12%; /* #001D3D - Same as card */
-    --muted-foreground: 15 70% 35%; /* #A13C1E - Dimmer Orange */
+    --muted: 15 70% 35%; /* #A13C1E - Dimmer Orange */
+    --muted-foreground: 0 0% 80%; /* #CCCCCC - Dimmer White/Grey */
 
     --accent: 15 70% 50%; /* #D65027 */
-    --accent-foreground: 200 100% 11%; /* #002B3A - New background for contrast */
+    --accent-foreground: 0 0% 100%; /* #FFFFFF */
 
     --destructive: 0 79% 57%; /* #E53E3E - Standard Red */
     --destructive-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --border: 210 100% 20%; /* #003566 - Same as secondary */
-    --input: 210 100% 20%; /* #003566 - Same as secondary */
+    --border: 15 70% 50%; /* #D65027 */
+    --input: 15 70% 50%; /* #D65027 */
     --ring: 15 70% 50%; /* #D65027 */
 
     --radius: 0.5rem;
 
     /* Chart colors derived from the new palette */
-    --chart-1: 15 70% 50%;    /* New Orange: #D65027 */
-    --chart-2: 210 100% 20%;   /* Medium Blue: #003566 */
+    --chart-1: 15 70% 50%;    /* Main Orange: #D65027 */
+    --chart-2: 15 70% 35%;   /* Dimmer Orange: #A13C1E */
     --chart-3: 15 70% 60%;    /* Lighter Orange: #E0744F */
-    --chart-4: 210 100% 30%;   /* Lighter Medium Blue, e.g., #004C99 */
-    --chart-5: 210 100% 12%;   /* Dark Blue: #001D3D */
+    --chart-4: 15 70% 25%;   /* Darker Orange: #8C3618 */
+    --chart-5: 0 0% 100%;   /* White */
     
     /* Sidebar colors derived from the new palette */
-    --sidebar-background: 200 100% 7%;       /* #001C27 - Even darker than new main background */
-    --sidebar-foreground: 15 70% 50%;       /* #D65027 */
+    --sidebar-background: 15 70% 35%;       /* #A13C1E - Dim Orange */
+    --sidebar-foreground: 0 0% 100%;       /* #FFFFFF */
     --sidebar-primary: 15 70% 50%;          /* #D65027 */
-    --sidebar-primary-foreground: 0 0% 100%; /* White */
-    --sidebar-accent: 200 100% 10%;           /* #002633 - Slightly lighter than sidebar background */
-    --sidebar-accent-foreground: 15 70% 50%;  /* #D65027 */
-    --sidebar-border: 200 100% 12%;          /* #003141 - Visible on sidebar bg */
+    --sidebar-primary-foreground: 0 0% 100%; /* #FFFFFF */
+    --sidebar-accent: 15 70% 60%;           /* #E0744F - Lighter Orange */
+    --sidebar-accent-foreground: 0 0% 100%;  /* #FFFFFF */
+    --sidebar-border: 15 70% 50%;          /* #D65027 */
     --sidebar-ring: 15 70% 50%;             /* #D65027 */
   }
 }
