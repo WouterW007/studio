@@ -100,7 +100,7 @@ export default function GroupDirectoryPage() {
           </div>
           <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-2xl">
             <Image
-              src="https://placehold.co/600x450.png" // <-- IMPORTANT: Replace this with the actual public URL of your banner-bg.jpeg
+              src="https://firebasestorage.googleapis.com/v0/b/kleingroepe-site.firebasestorage.app/o/banner-bg.jpeg?alt=media&token=1ea7b3f5-77cf-4408-a576-0973ef227ba4" // <-- IMPORTANT: Replace this with the actual public URL of your banner-bg.jpeg
               alt="Kleingroep banier"
               layout="fill"
               objectFit="cover"
