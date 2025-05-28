@@ -86,7 +86,7 @@ export default function GroupDirectoryPage() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-foreground">
               Vind die perfekte <br className="md:hidden"/>
               <span className="inline-block mt-1 md:mt-0">
-                <span className="bg-primary text-background px-2 py-1 rounded-md text-5xl sm:text-6xl lg:text-7xl font-bold">
+                <span className="bg-primary text-primary-foreground px-2 py-1 rounded-md text-5xl sm:text-6xl lg:text-7xl font-bold">
                   Kleingroep.
                 </span>
               </span>
@@ -161,5 +161,3 @@ export default function GroupDirectoryPage() {
     </div>
   );
 }
-
-    
