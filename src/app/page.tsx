@@ -100,7 +100,7 @@ export default function GroupDirectoryPage() {
           </div>
           <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-2xl">
             <Image
-              src="/banner-bg.jpeg"
+              src="YOUR_FIREBASE_STORAGE_IMAGE_URL_HERE" // <-- IMPORTANT: Replace this with the actual public URL of your banner-bg.jpeg
               alt="Kleingroep banier"
               layout="fill"
               objectFit="cover"
