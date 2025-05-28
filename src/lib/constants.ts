@@ -1,7 +1,8 @@
+
 import type { FocusCategory, MeetingDay, MeetingTime, MeetingType, TargetAudience, FocusCategoryKey } from "@/types";
 import { BookOpen, HandHeart, UsersRound, Send, HeartHandshake, Baby, Landmark, Briefcase, Smile, MessageSquareHeart, Palette, Dumbbell } from "lucide-react";
 
-export const APP_NAME = "Gaan Groepe Directory";
+export const APP_NAME = "Kleingroep Gids";
 
 export const MEETING_DAYS: MeetingDay[] = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 export const MEETING_TIMES: MeetingTime[] = ["Morning", "Afternoon", "Evening", "Anytime"];
@@ -49,3 +50,5 @@ export const getCategoryDetails = (key?: FocusCategoryKey): FocusCategory | unde
   if (!key) return undefined;
   return FOCUS_CATEGORIES.find(cat => cat.key === key);
 };
+
+    

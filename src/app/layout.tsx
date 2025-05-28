@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
@@ -18,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: APP_NAME,
-  description: 'Vind en sluit aan by Gaan Groepe in jou area.',
+  description: 'Vind en sluit aan by Kleingroepe in jou area.',
 };
 
 export default function RootLayout({
@@ -39,3 +40,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+    

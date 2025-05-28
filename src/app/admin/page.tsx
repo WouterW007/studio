@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
@@ -57,7 +58,7 @@ export default function AdminPage() {
             <div>
               <CardTitle className="text-3xl font-bold">Admin Paneel</CardTitle>
               <CardDescription className="text-lg">
-                Bestuur Gaan Groep registrasies. Keur goed, wys af, of verwyder groepe.
+                Bestuur Kleingroep registrasies. Keur goed, wys af, of verwyder groepe.
               </CardDescription>
             </div>
           </div>
@@ -69,3 +70,5 @@ export default function AdminPage() {
     </div>
   );
 }
+
+    

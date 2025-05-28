@@ -1,3 +1,4 @@
+
 "use client";
 
 import type { Group } from "@/types";
@@ -20,7 +21,7 @@ export default function GroupDetailClient({ group }: GroupDetailClientProps) {
   const handleContactLeader = () => {
     // Basic mailto link. Could be a modal form in a real app.
     if (group.leaderContact.includes('@')) {
-      window.location.href = `mailto:${group.leaderContact}?subject=Navraag oor Gaan Groep: ${group.groupName}`;
+      window.location.href = `mailto:${group.leaderContact}?subject=Navraag oor Kleingroep: ${group.groupName}`;
     } else {
       window.location.href = `tel:${group.leaderContact}`;
     }
@@ -85,7 +86,7 @@ export default function GroupDetailClient({ group }: GroupDetailClientProps) {
             )}
             {group.description && (
               <div className="space-y-1">
-                <h3 className="font-semibold text-lg flex items-center"><Info className="h-5 w-5 mr-2 text-primary"/>Oor hierdie groep</h3>
+                <h3 className="font-semibold text-lg flex items-center"><Info className="h-5 w-5 mr-2 text-primary"/>Oor hierdie kleingroep</h3>
                 <p className="text-muted-foreground leading-relaxed">{group.description}</p>
               </div>
             )}
@@ -131,3 +132,5 @@ export default function GroupDetailClient({ group }: GroupDetailClientProps) {
     </Card>
   );
 }
+
+    

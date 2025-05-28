@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo } from 'react';
@@ -10,7 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Search, LayoutGrid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-
+import Image from 'next/image';
 
 export default function GroupDirectoryPage() {
   const [allGroups, setAllGroups] = useState<Group[]>([]);
@@ -68,20 +69,51 @@ export default function GroupDirectoryPage() {
     setFilters(newFilters);
   };
 
+  const handleScrollToSearch = () => {
+    const searchSection = document.getElementById('search-section');
+    if (searchSection) {
+      searchSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   const noResults = filteredGroups.length === 0;
 
   return (
     <div className="space-y-12">
-      <section className="text-center py-8 bg-gradient-to-r from-primary/10 to-background rounded-xl shadow-inner">
-        <h1 className="text-4xl font-bold mb-3 text-primary">Vind Jou Gaan Groep</h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Ontdek en sluit aan by 'n Gaan Groep wat by jou pas. Groei saam in geloof en gemeenskap.
-        </p>
+      <section className="py-8 md:py-16">
+        <div className="container mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+          <div className="space-y-6 text-center md:text-left">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-foreground">
+              Vind die perfekte <br className="md:hidden"/>
+              <span className="inline-block mt-1 md:mt-0">
+                <span className="bg-primary text-background px-2 py-1 rounded-md text-5xl sm:text-6xl lg:text-7xl font-bold">
+                  Kleingroep.
+                </span>
+              </span>
+            </h1>
+            <p className="text-lg text-foreground/80 max-w-xl mx-auto md:mx-0">
+              Ontdek 'n gemeenskap waar jy kan groei, leer en saam met ander jou geloof kan uitleef. Soek en vind 'n kleingroep naby jou.
+            </p>
+            <Button size="lg" onClick={handleScrollToSearch}>
+              Vind 'n Groep
+            </Button>
+          </div>
+          <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-2xl">
+            <Image
+              src="https://placehold.co/600x450.png"
+              alt="Mense om 'n kampvuur"
+              layout="fill"
+              objectFit="cover"
+              data-ai-hint="campfire friends"
+              className="transform transition-transform duration-500 hover:scale-105"
+            />
+          </div>
+        </div>
       </section>
 
       <NoticeBoard announcements={announcements} />
 
-      <section>
+      <section id="search-section">
         <div className="mb-8 flex flex-col sm:flex-row gap-4 items-center">
           <div className="relative flex-grow w-full sm:w-auto">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
@@ -111,7 +143,7 @@ export default function GroupDirectoryPage() {
             {noResults ? (
               <div className="text-center py-12">
                 <Search className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-2xl font-semibold mb-2">Geen Groepe Gevind</h3>
+                <h3 className="text-2xl font-semibold mb-2">Geen Kleingroepe Gevind</h3>
                 <p className="text-muted-foreground">
                   Probeer asseblief jou soekterme of filters aanpas.
                 </p>
@@ -129,3 +161,5 @@ export default function GroupDirectoryPage() {
     </div>
   );
 }
+
+    

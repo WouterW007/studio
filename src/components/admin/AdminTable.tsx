@@ -1,3 +1,4 @@
+
 "use client";
 
 import type React from 'react';
@@ -26,6 +27,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { Card } from '../ui/card';
 
 interface AdminTableProps {
   groups: Group[];
@@ -109,7 +111,7 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "gaan_groepe_data.csv");
+    link.setAttribute("download", "kleingroepe_data.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -138,7 +140,7 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
             {groups.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-center h-24">
-                  Geen groepe gevind nie.
+                  Geen kleingroepe gevind nie.
                 </TableCell>
               </TableRow>
             )}
@@ -214,3 +216,5 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
     </div>
   );
 }
+
+    

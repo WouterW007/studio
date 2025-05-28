@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -75,9 +76,9 @@ export function GroupForm() {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     toast({
-      title: "Groep Registrasie Ingedien",
+      title: "Kleingroep Registrasie Ingedien",
       description: (
-        <p>Dankie, {data.leaderName}! Jou groep "{data.groupName}" is ingedien vir goedkeuring.</p>
+        <p>Dankie, {data.leaderName}! Jou kleingroep "{data.groupName}" is ingedien vir goedkeuring.</p>
       ),
       variant: "default",
     });
@@ -297,7 +298,7 @@ export function GroupForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                     <SelectItem value="">Geen</SelectItem>
+                     <SelectItem value={""}>Geen</SelectItem> {/* Empty string value for "None" selection */}
                     {FOCUS_CATEGORIES.map(category => (
                       <SelectItem key={category.key} value={category.key}>{category.name}</SelectItem>
                     ))}
@@ -412,9 +413,11 @@ export function GroupForm() {
         />
         
         <Button type="submit" className="w-full md:w-auto" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Besig om te stuur..." : "Registreer Groep"}
+          {form.formState.isSubmitting ? "Besig om te stuur..." : "Registreer Kleingroep"}
         </Button>
       </form>
     </Form>
   );
 }
+
+    

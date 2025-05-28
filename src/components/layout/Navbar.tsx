@@ -1,3 +1,4 @@
+
 import Link from 'next/link';
 import { Home, PlusCircle, UserCog, Church } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,7 +16,7 @@ export default function Navbar() {
           <Button variant="ghost" asChild>
             <Link href="/" className="flex items-center text-sm sm:text-base">
               <Home className="mr-1 h-4 w-4 sm:mr-2" />
-              Groepe
+              Kleingroepe
             </Link>
           </Button>
           <Button variant="ghost" asChild>
@@ -35,3 +36,5 @@ export default function Navbar() {
     </header>
   );
 }
+
+    

@@ -1,3 +1,4 @@
+
 import GroupDetailClient from '@/components/groups/GroupDetailClient';
 import { MOCK_GROUPS } from '@/data/mockData'; // In real app, fetch from DB
 import type { Group } from '@/types';
@@ -22,12 +23,12 @@ export default async function GroupDetailPage({ params }: GroupDetailPageProps) 
     return (
       <div className="text-center py-12">
         <AlertTriangle className="h-16 w-16 text-destructive mx-auto mb-4" />
-        <h2 className="text-3xl font-semibold mb-3">Groep Nie Gevind Nie</h2>
+        <h2 className="text-3xl font-semibold mb-3">Kleingroep Nie Gevind Nie</h2>
         <p className="text-muted-foreground mb-6">
-          Die groep waarvoor jy soek kon nie gevind word nie. Dit mag dalk verwyder wees of die skakel is verkeerd.
+          Die kleingroep waarvoor jy soek kon nie gevind word nie. Dit mag dalk verwyder wees of die skakel is verkeerd.
         </p>
         <Button asChild>
-          <Link href="/">Terug na Alle Groepe</Link>
+          <Link href="/">Terug na Alle Kleingroepe</Link>
         </Button>
       </div>
     );
@@ -37,12 +38,12 @@ export default async function GroupDetailPage({ params }: GroupDetailPageProps) 
      return (
       <div className="text-center py-12">
         <AlertTriangle className="h-16 w-16 text-amber-500 mx-auto mb-4" />
-        <h2 className="text-3xl font-semibold mb-3">Groep Nie Beskikbaar</h2>
+        <h2 className="text-3xl font-semibold mb-3">Kleingroep Nie Beskikbaar</h2>
         <p className="text-muted-foreground mb-6">
-          Hierdie groep is tans nie publiek sigbaar nie. Dit mag nog wag vir goedkeuring of is gedeaktiveer.
+          Hierdie kleingroep is tans nie publiek sigbaar nie. Dit mag nog wag vir goedkeuring of is gedeaktiveer.
         </p>
         <Button asChild>
-          <Link href="/">Terug na Alle Groepe</Link>
+          <Link href="/">Terug na Alle Kleingroepe</Link>
         </Button>
       </div>
     );
@@ -65,11 +66,13 @@ export async function generateMetadata({ params }: GroupDetailPageProps) {
   const group = await getGroupById(params.id);
   if (!group || group.status !== 'approved') {
     return {
-      title: "Groep Nie Gevind Nie",
+      title: "Kleingroep Nie Gevind Nie",
     };
   }
   return {
-    title: `${group.groupName} | Gaan Groepe`,
-    description: group.description?.substring(0, 160) || `Meer inligting oor die Gaan Groep: ${group.groupName}.`,
+    title: `${group.groupName} | Kleingroepe`,
+    description: group.description?.substring(0, 160) || `Meer inligting oor die Kleingroep: ${group.groupName}.`,
   };
 }
+
+    
