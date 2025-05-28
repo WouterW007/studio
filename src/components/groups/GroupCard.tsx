@@ -40,7 +40,7 @@ export default function GroupCard({ group }: GroupCardProps) {
         )}
         <div className="p-6 pb-2">
             <CardTitle className="text-xl font-semibold leading-tight mb-1">
-              <Link href={`/groups/${group.id}`} className="hover:text-primary transition-colors">
+              <Link href={`/groups/${group.id}`} className="hover:text-background transition-colors">
                 {group.groupName}
               </Link>
             </CardTitle>
