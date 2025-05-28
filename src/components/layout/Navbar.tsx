@@ -1,6 +1,6 @@
 
 import Link from 'next/link';
-import { Home, PlusCircle, UserCog, Church } from 'lucide-react';
+import { Home, PlusCircle, UserCog, Church, Facebook, Youtube, Instagram } from 'lucide-react'; // Added Facebook, Youtube, Instagram
 import { Button } from '@/components/ui/button';
 import { APP_NAME } from '@/lib/constants';
 
@@ -36,5 +36,3 @@ export default function Navbar() {
     </header>
   );
 }
-
-    
