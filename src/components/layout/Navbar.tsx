@@ -8,7 +8,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
-        <Link href="/" className="flex items-center space-x-2">
+        <Link href="https://www.kerk.co.za/" className="flex items-center space-x-2 ml-2" target="_blank" rel="noopener noreferrer">
           <Image
             src="https://firebasestorage.googleapis.com/v0/b/kleingroepe-site.firebasestorage.app/o/baptiste-logo.png?alt=media&token=6de2241a-2f31-4c2d-8944-b224beac56a1"
             alt="Kerk Logo"
