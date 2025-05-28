@@ -37,7 +37,8 @@ import { useRouter } from "next/navigation";
 
 const groupFormSchema = z.object({
   leaderName: z.string().min(2, "Leier se naam moet ten minste 2 karakters lank wees."),
-  leaderContact: z.string().email("Ongeldige e-posadres.").or(z.string().min(10, "Telefoonnommer moet ten minste 10 syfers hê.")),
+  leaderEmail: z.string().email("Ongeldige e-posadres.").or(z.literal('')).optional(),
+  leaderCellphone: z.string().optional(), // Basic string validation for now
   groupName: z.string().min(3, "Groepnaam moet ten minste 3 karakters lank wees."),
   meetingDay: z.enum(MEETING_DAYS as [MeetingDay, ...MeetingDay[]], { required_error: "Kies 'n vergaderdag." }),
   meetingTime: z.enum(MEETING_TIMES as [MeetingTime, ...MeetingTime[]], { required_error: "Kies 'n vergadertyd." }),
@@ -107,7 +108,7 @@ export function GroupForm() {
             name="leaderName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Leier se Naam</FormLabel>
+                <FormLabel>Naam en Van</FormLabel>
                 <FormControl>
                   <Input placeholder="bv. Jan Coetzee" {...field} />
                 </FormControl>
@@ -116,14 +117,28 @@ export function GroupForm() {
             )}
           />
           <FormField
-            control={form.control}
-            name="leaderContact"
+            control={form.control} // Assuming leaderEmail is now optional in your schema
+            name="leaderEmail"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Leier se Kontak (E-pos / Selfoon)</FormLabel>
+                <FormLabel>E-pos</FormLabel>
                 <FormControl>
-                  <Input placeholder="bv. jan@example.com / 0821234567" {...field} />
+                  <Input placeholder="bv. jan@example.com" {...field} type="email" />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+           <FormField
+            control={form.control} // Assuming leaderCellphone is now optional in your schema
+            name="leaderCellphone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sel Nr.</FormLabel>
+                <FormControl>
+                  <Input placeholder="082 1234567" {...field} />
+                </FormControl>
+                
                 <FormMessage />
               </FormItem>
             )}
@@ -194,7 +209,7 @@ export function GroupForm() {
             name="meetingFrequency"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Vergaderfrekwensie</FormLabel>
+                <FormLabel>Hoe gereeld vergader julle?</FormLabel>
                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
@@ -273,7 +288,7 @@ export function GroupForm() {
             <FormItem>
               <FormLabel>Ligging / Area</FormLabel>
               <FormControl>
-                <Input placeholder="bv. Kerk Saal A, Bellville / Aanlyn via Zoom" {...field} />
+                <Input placeholder="bv. Kerk / Aanlyn via Zoom" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -316,7 +331,7 @@ export function GroupForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                     <SelectItem value={""}>Geen</SelectItem> {/* Empty string value for "None" selection */}
+ <SelectItem value={undefined}></SelectItem> {/* Use undefined for "None" selection */}
                     {FOCUS_CATEGORIES.map(category => (
                       <SelectItem key={category.key} value={category.key}>{category.name}</SelectItem>
                     ))}
