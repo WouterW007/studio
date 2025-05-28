@@ -78,7 +78,7 @@ export default function AdminLoginPage() {
             </p>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button type="submit" className="w-full bg-background text-foreground hover:bg-background/90">
               Login
             </Button>
           </CardFooter>
