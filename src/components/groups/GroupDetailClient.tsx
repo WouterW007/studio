@@ -19,10 +19,12 @@ export default function GroupDetailClient({ group }: GroupDetailClientProps) {
   const categoryColorClass = PRIMARY_CATEGORY_VISUAL_COLORS[group.primaryFocus] || 'bg-primary';
 
   const handleContactLeader = () => {
-    // Basic mailto link. Could be a modal form in a real app.
+    // Basic mailto/tel link. Could be a modal form in a real app.
     if (group.leaderContact.includes('@')) {
       window.location.href = `mailto:${group.leaderContact}?subject=Navraag oor Kleingroep: ${group.groupName}`;
     } else {
+      // Basic check; for more robust phone number detection, a library might be needed.
+      // This assumes if it's not an email, it's a phone number.
       window.location.href = `tel:${group.leaderContact}`;
     }
   };
@@ -132,5 +134,3 @@ export default function GroupDetailClient({ group }: GroupDetailClientProps) {
     </Card>
   );
 }
-
-    
