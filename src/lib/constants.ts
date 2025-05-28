@@ -9,7 +9,7 @@ export const MEETING_TIMES: MeetingTime[] = ["Oggend", "Middag", "Aand", "Enige 
 export const MEETING_TYPES: MeetingType[] = ["in persoon", "aanlyn"];
 export const MEETING_FREQUENCIES: string[] = ["Weekliks", "Maandeliks"];
 export const TARGET_AUDIENCES: TargetAudience[] = ["Mans", "Vroue", "Gemengde Volwassenes", "Jong Volwassenes (18-25)", "Jeug (12-17)", "Seniors (60+)", "Gesinne"];
-export const AREAS: string[] = ["Langenhovenpark", "Universitas", "Westdene", "Brandwag", "Fichardtpark", "Pellissier", "Wilgehof", "Gardenia Park"];
+export const AREAS: string[] = ["Langenhovenpark", "Universitas", "Westdene", "Brandwag", "Fichardtpark", "Pellissier", "Wilgehof", "Gardenia Park", "Alle Areas"];
 
 
 export const CATEGORY_COLORS = {
@@ -39,6 +39,8 @@ export const FOCUS_CATEGORIES: FocusCategory[] = [
   { key: "geestelike-groei", name: "Geestelike Groei", icon: UsersRound, color: CATEGORY_COLORS.purple, description: "Groei in geloof en volgelingskap." },
   { key: "gaan", name: "Gaan Groep", icon: Send, color: CATEGORY_COLORS.yellow, description: "Impak maak in die gemeenskap." },
 ];
+
+export const ANNOUNCEMENT_CATEGORIES: string[] = ["Event", "Training", "Group Needs", "General"];
 
 export const getCategoryDetails = (key?: FocusCategoryKey): FocusCategory | undefined => {
   if (!key) return undefined;
