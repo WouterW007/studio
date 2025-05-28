@@ -171,7 +171,7 @@ export default function AnnouncementManager({ announcements, onAddAnnouncement, 
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel className="border-input text-foreground hover:bg-accent">Kanselleer</AlertDialogCancel>
+                        <AlertDialogCancel className="border-input text-foreground hover:bg-accent hover:text-accent-foreground">Kanselleer</AlertDialogCancel>
                         <AlertDialogAction onClick={() => handleDelete(ann.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                           Verwyder
                         </AlertDialogAction>
