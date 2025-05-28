@@ -371,10 +371,10 @@ export function GroupForm() {
                     </FormControl>
                     <div className="space-y-1 leading-none">
                       <FormLabel>
-                        Kinder toesig beskikbaar?
+                        Kinder toesig beskikbaar? (Merk indien Ja)
                       </FormLabel>
                       <FormDescription>
-                        Merk hierdie indien daar kinder toesig aangebied word tydens die groep.
+                        As jy hierdie merk, beteken dit 'Ja', kinder toesig is beskikbaar. Los dit oop indien kinder toesig 'Nee' is (nie beskikbaar nie).
                       </FormDescription>
                     </div>
                   </FormItem>
