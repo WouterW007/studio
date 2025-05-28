@@ -2,7 +2,7 @@
 import type { FocusCategory, MeetingDay, MeetingTime, MeetingType, TargetAudience, FocusCategoryKey } from "@/types";
 import { BookOpen, HandHeart, UsersRound, Send, HeartHandshake, Baby, Landmark, Briefcase, Smile, MessageSquareHeart, Palette, Dumbbell } from "lucide-react";
 
-export const APP_NAME = "Kleingroep Gids";
+export const APP_NAME = "Kleingroepe";
 
 export const MEETING_DAYS: MeetingDay[] = ["Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrydag", "Saterdag", "Sondag"];
 export const MEETING_TIMES: MeetingTime[] = ["Oggend", "Middag", "Aand", "Enige tyd"];
