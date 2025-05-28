@@ -1,3 +1,4 @@
+
 import type { Announcement } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -39,7 +40,10 @@ export default function NoticeBoard({ announcements }: NoticeBoardProps) {
         <ScrollArea className="h-72"> {/* Max height with scroll */}
           <div className="space-y-4 pr-4">
             {announcements.map(announcement => (
-              <div key={announcement.id} className="p-4 border border-border rounded-lg bg-card hover:bg-secondary/50 transition-colors">
+              <div 
+                key={announcement.id} 
+                className="p-4 border border-border rounded-lg bg-background hover:bg-muted/60 transition-colors"
+              >
                 <div className="flex justify-between items-start mb-1">
                   <h4 className="font-semibold text-md">{announcement.title}</h4>
                   {announcement.category && (
