@@ -80,13 +80,13 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
   const getStatusBadge = (status: Group['status']) => {
     switch (status) {
       case 'approved':
-        return <Badge variant="default" className="bg-green-600 hover:bg-green-700"><CheckCircle className="mr-1 h-3 w-3" />Goedgekeur</Badge>;
+        return <Badge className="bg-green-100 text-green-700 border border-green-300 hover:bg-green-200"><CheckCircle className="mr-1 h-3 w-3" />Goedgekeur</Badge>;
       case 'pending':
-        return <Badge variant="secondary" className="bg-yellow-500 hover:bg-yellow-600 text-black"><Clock className="mr-1 h-3 w-3" />Hangende</Badge>;
+        return <Badge className="bg-yellow-100 text-yellow-700 border border-yellow-300 hover:bg-yellow-200"><Clock className="mr-1 h-3 w-3" />Hangende</Badge>;
       case 'declined':
-        return <Badge variant="destructive"><XCircle className="mr-1 h-3 w-3" />Afgewys</Badge>;
+        return <Badge className="bg-red-100 text-red-700 border border-red-300 hover:bg-red-200"><XCircle className="mr-1 h-3 w-3" />Afgewys</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="outline" className="text-neutral-700 border-neutral-300">{status}</Badge>;
     }
   };
   
@@ -95,7 +95,7 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
     const headers = ["ID", "Groepnaam", "Leier Naam", "Leier Kontak", "Status", "Primêre Fokus", "Ligging", "Dag", "Tyd", "Kapasiteit", "Huidige Lede"];
     const rows = groups.map(group => [
       group.id,
-      `"${group.groupName.replace(/"/g, '""')}"`, // Handle quotes in name
+      `"${group.groupName.replace(/"/g, '""')}"`, 
       `"${group.leaderName.replace(/"/g, '""')}"`,
       group.leaderContact,
       group.status,
@@ -126,28 +126,28 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
           <FileDown className="mr-2 h-4 w-4" /> Uitvoer na CSV
         </Button>
       </div>
-      <Card>
+      <Card className="bg-white text-neutral-900 border-neutral-200 shadow-md">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Groepnaam</TableHead>
-              <TableHead>Leier</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Aksies</TableHead>
+            <TableRow className="border-neutral-200">
+              <TableHead className="text-neutral-600">Groepnaam</TableHead>
+              <TableHead className="text-neutral-600">Leier</TableHead>
+              <TableHead className="text-neutral-600">Status</TableHead>
+              <TableHead className="text-neutral-600 text-right">Aksies</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {groups.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center h-24">
+              <TableRow className="border-neutral-200">
+                <TableCell colSpan={4} className="text-center h-24 text-neutral-500">
                   Geen kleingroepe gevind nie.
                 </TableCell>
               </TableRow>
             )}
             {groups.map((group) => (
-              <TableRow key={group.id}>
-                <TableCell className="font-medium">{group.groupName}</TableCell>
-                <TableCell>{group.leaderName} ({group.leaderContact})</TableCell>
+              <TableRow key={group.id} className="border-neutral-200 hover:bg-neutral-50">
+                <TableCell className="font-medium text-neutral-800">{group.groupName}</TableCell>
+                <TableCell className="text-neutral-700">{group.leaderName} ({group.leaderContact})</TableCell>
                 <TableCell>{getStatusBadge(group.status)}</TableCell>
                 <TableCell className="text-right space-x-1">
                   {group.status !== 'approved' && (
@@ -156,7 +156,7 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
                       size="sm"
                       onClick={() => handleAction(group.id, 'approved')}
                       disabled={actioningGroupId === group.id}
-                      className="text-green-600 hover:text-green-700"
+                      className="text-green-600 hover:text-green-700 hover:bg-green-50 p-1 rounded-md"
                       title="Keur goed"
                     >
                       {actioningGroupId === group.id ? <RefreshCw className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />}
@@ -168,19 +168,19 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
                       size="sm"
                       onClick={() => handleAction(group.id, 'declined')}
                       disabled={actioningGroupId === group.id}
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 p-1 rounded-md"
                       title="Wys af"
                     >
                        {actioningGroupId === group.id ? <RefreshCw className="h-4 w-4 animate-spin" /> : <XCircle className="h-4 w-4" />}
                     </Button>
                   )}
-                   {group.status === 'declined' && ( // Allow re-pending declined groups
+                   {group.status === 'declined' && ( 
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleAction(group.id, 'pending')}
                       disabled={actioningGroupId === group.id}
-                      className="text-yellow-600 hover:text-yellow-700"
+                      className="text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50 p-1 rounded-md"
                        title="Stel as hangende"
                     >
                        {actioningGroupId === group.id ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Clock className="h-4 w-4" />}
@@ -188,20 +188,20 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
                   )}
                    <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button variant="ghost" size="sm" title="Verwyder" className="text-destructive hover:text-destructive/80" disabled={actioningGroupId === group.id}>
+                      <Button variant="ghost" size="sm" title="Verwyder" className="text-destructive hover:text-destructive/80 hover:bg-destructive/10 p-1 rounded-md" disabled={actioningGroupId === group.id}>
                         {actioningGroupId === group.id && actioningGroupId === group.id ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                       </Button>
                     </AlertDialogTrigger>
-                    <AlertDialogContent>
+                    <AlertDialogContent className="bg-white border-neutral-300">
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Is jy seker?</AlertDialogTitle>
-                        <AlertDialogDescription>
+                        <AlertDialogTitle className="text-neutral-900">Is jy seker?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-neutral-600">
                           Hierdie aksie kan nie ontdoen word nie. Dit sal die groep permanent verwyder.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Kanselleer</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => handleDelete(group.id)} className="bg-destructive hover:bg-destructive/90">
+                        <AlertDialogCancel className="border-neutral-300 text-neutral-700 hover:bg-neutral-100">Kanselleer</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => handleDelete(group.id)} className="bg-red-600 hover:bg-red-700 text-white">
                           Verwyder
                         </AlertDialogAction>
                       </AlertDialogFooter>
