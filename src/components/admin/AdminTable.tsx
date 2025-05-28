@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Clock, FileDown, RefreshCw, Trash2, LogOut } from 'lucide-react'; // Added LogOut
+import { CheckCircle, XCircle, Clock, FileDown, RefreshCw, Trash2, LogOut } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,7 +33,7 @@ interface AdminTableProps {
   groups: Group[];
   onUpdateStatus: (groupId: string, status: Group['status']) => Promise<void>;
   onDeleteGroup: (groupId: string) => Promise<void>;
-  onLogout: () => void; // New prop for logout handler
+  onLogout: () => void;
 }
 
 export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup, onLogout }: AdminTableProps) {
@@ -107,21 +107,35 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup, onLo
       group.currentMembers,
     ].join(","));
 
-    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n");
-    const encodedUri = encodeURI(csvContent);
+    const csvString = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "kleingroepe_data.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    toast({ title: "Data Uitgevoer", description: "Alle groepdata is na CSV uitgevoer." });
+
+    // Feature detection for download attribute
+    if (link.download !== undefined) { 
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", "kleingroepe_data.csv");
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url); // Release the object URL
+      toast({ title: "Data Uitgevoer", description: "Alle groepdata is na CSV uitgevoer." });
+    } else {
+      // Fallback or error message if download attribute is not supported
+      toast({ 
+        title: "Uitvoer Fout", 
+        description: "CSV uitvoer word nie ten volle deur jou blaaier ondersteun nie.", 
+        variant: "destructive" 
+      });
+    }
   };
 
 
   return (
     <div className="space-y-4">
-       <div className="flex justify-end space-x-2 mb-4"> {/* Added mb-4 for spacing below buttons */}
+       <div className="flex justify-end space-x-2 mb-4">
         <Button onClick={exportToCSV} variant="outline">
           <FileDown className="mr-2 h-4 w-4" /> Uitvoer na CSV
         </Button>
