@@ -179,10 +179,10 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
           </div>
 
           <div className="flex space-x-2 pt-2">
-            <Button type="submit" className="flex-1">
+            <Button type="submit" className="flex-1 bg-background text-foreground hover:bg-background/90 border border-primary">
               <SlidersHorizontal className="mr-2 h-4 w-4" /> Pas Filters Toe
             </Button>
-            <Button type="button" variant="outline" onClick={handleReset} title="Stel filters terug">
+            <Button type="button" onClick={handleReset} title="Stel filters terug" className="bg-background text-foreground hover:bg-background/90 border border-primary">
               <RotateCcw className="h-4 w-4" />
             </Button>
           </div>
