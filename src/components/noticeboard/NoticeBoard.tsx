@@ -42,7 +42,7 @@ export default function NoticeBoard({ announcements }: NoticeBoardProps) {
             {announcements.map(announcement => (
               <div 
                 key={announcement.id} 
-                className="p-4 border border-border rounded-lg bg-background hover:bg-muted/60 transition-colors"
+                className="p-4 border border-border rounded-lg bg-teal-600 hover:bg-background transition-colors"
               >
                 <div className="flex justify-between items-start mb-1">
                   <h4 className="font-semibold text-md">{announcement.title}</h4>
@@ -53,8 +53,8 @@ export default function NoticeBoard({ announcements }: NoticeBoardProps) {
                     </Badge>
                   )}
                 </div>
-                <p className="text-sm text-muted-foreground mb-2">{announcement.content}</p>
-                <p className="text-xs text-muted-foreground/70">
+                <p className="text-sm text-foreground mb-2">{announcement.content}</p>
+                <p className="text-xs text-foreground/70">
                   Gepos: {new Date(announcement.date).toLocaleDateString('af-ZA', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
@@ -65,3 +65,4 @@ export default function NoticeBoard({ announcements }: NoticeBoardProps) {
     </Card>
   );
 }
+
