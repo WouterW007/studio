@@ -83,7 +83,7 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
             <Input 
               id="area" 
               name="area" 
-              placeholder="bv. Bellville, Aanlyn" 
+              placeholder="Langenhovenpark" 
               value={filters.area || ""}
               onChange={handleInputChange} 
             />
