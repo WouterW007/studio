@@ -410,6 +410,7 @@ export function GroupForm() {
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
+                      variant="outline"
                       className={cn(
                         "w-[240px] pl-3 text-left font-normal",
                         "bg-background border border-input text-foreground hover:bg-background/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-background",
@@ -445,11 +446,17 @@ export function GroupForm() {
           )}
         />
         
-        <Button type="submit" className="w-full md:w-auto" disabled={form.formState.isSubmitting}>
+        <Button 
+          type="submit" 
+          className="w-full md:w-auto bg-background text-foreground border border-primary hover:bg-background/90" 
+          disabled={form.formState.isSubmitting}
+        >
           {form.formState.isSubmitting ? "Besig om te stuur..." : "Registreer Kleingroep"}
         </Button>
       </form>
     </Form>
   );
 }
+    
+
     
