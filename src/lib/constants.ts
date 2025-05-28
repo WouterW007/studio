@@ -9,6 +9,8 @@ export const MEETING_TIMES: MeetingTime[] = ["Morning", "Afternoon", "Evening", 
 export const MEETING_TYPES: MeetingType[] = ["Physical", "Online", "Hybrid"];
 export const MEETING_FREQUENCIES: string[] = ["Weekly", "Bi-weekly", "Monthly", "Fortnightly"];
 export const TARGET_AUDIENCES: TargetAudience[] = ["Anyone", "Men", "Women", "Mixed Adults", "Young Adults (18-25)", "Youth (12-17)", "Seniors (60+)", "Families"];
+export const AREAS: string[] = ["Langenhovenpark", "Universitas", "Westdene", "Brandwag", "Fichardtpark", "Pellissier", "Wilgehof", "Gardenia Park"];
+
 
 export const CATEGORY_COLORS = {
   blue: "text-blue-500", // For icon color

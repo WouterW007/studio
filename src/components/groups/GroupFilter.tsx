@@ -6,10 +6,9 @@ import { useState, useEffect } from 'react';
 import type { FilterOptions, MeetingDay, MeetingTime, TargetAudience, FocusCategoryKey, MeetingType } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TARGET_AUDIENCES, MEETING_DAYS, MEETING_TIMES, FOCUS_CATEGORIES, MEETING_TYPES } from '@/lib/constants';
+import { TARGET_AUDIENCES, MEETING_DAYS, MEETING_TIMES, FOCUS_CATEGORIES, MEETING_TYPES, AREAS } from '@/lib/constants';
 import { SlidersHorizontal, RotateCcw } from 'lucide-react';
 
 interface GroupFilterProps {
@@ -27,15 +26,10 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
     setMounted(true);
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFilters(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (name: keyof Omit<FilterOptions, 'area' | 'childcare'>) => (value: string) => {
+  const handleSelectChange = (name: keyof FilterOptions) => (value: string) => {
     setFilters(prev => ({
       ...prev,
-      [name]: value === ALL_FILTER_VALUE ? undefined : value as any, // Cast as any, actual type is string matching enum
+      [name]: value === ALL_FILTER_VALUE ? undefined : value as any,
     }));
   };
 
@@ -61,7 +55,7 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="animate-pulse space-y-4">
-            {[...Array(5)].map((_, i) => (
+            {[...Array(6)].map((_, i) => ( // Increased to 6 for the new dropdown
               <div key={i} className="h-10 bg-muted rounded-md"></div>
             ))}
             <div className="h-10 bg-primary/50 rounded-md"></div>
@@ -80,13 +74,17 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <Label htmlFor="area">Area / Ligging</Label>
-            <Input 
-              id="area" 
-              name="area" 
-              placeholder="Langenhovenpark" 
-              value={filters.area || ""}
-              onChange={handleInputChange} 
-            />
+            <Select name="area" onValueChange={handleSelectChange("area")} value={filters.area || ALL_FILTER_VALUE}>
+              <SelectTrigger id="area">
+                <SelectValue placeholder="Alle Areas" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_FILTER_VALUE}>Alle Areas</SelectItem>
+                {AREAS.map(area => (
+                  <SelectItem key={area} value={area}>{area}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
@@ -191,5 +189,4 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
     </Card>
   );
 }
-
     
