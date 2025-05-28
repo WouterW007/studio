@@ -9,7 +9,7 @@ export default function RegisterGroupPage() {
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-primary">Registreer 'n Nuwe Kleingroep</CardTitle>
           <CardDescription className="text-lg">
-            registreer jou kleingroep hier.
+            Registreer jou Kleingroep
           </CardDescription>
         </CardHeader>
         <CardContent>
