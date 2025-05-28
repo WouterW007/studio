@@ -100,11 +100,11 @@ export default function GroupDirectoryPage() {
           </div>
           <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-2xl">
             <Image
-              src="https://placehold.co/600x450.png"
-              alt="Mense om 'n kampvuur"
+              src="/banner-bg.jpeg"
+              alt="Kleingroep banier"
               layout="fill"
               objectFit="cover"
-              data-ai-hint="campfire friends"
+              data-ai-hint="banner"
               className="transform transition-transform duration-500 hover:scale-105"
             />
           </div>
