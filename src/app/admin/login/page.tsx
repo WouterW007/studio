@@ -7,40 +7,47 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertTriangle, LogIn } from 'lucide-react';
+import { AlertTriangle, LogIn, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-// WARNING: This is a hardcoded password for a non-secure prototype login.
-// DO NOT use this in a production environment.
-const ADMIN_PASSWORD = "adminpass";
+import { auth } from '@/lib/firebase';
+import { signInWithEmailAndPassword, type FirebaseError } from 'firebase/auth';
 
 export default function AdminLoginPage() {
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
-    if (password === ADMIN_PASSWORD) {
-      try {
-        localStorage.setItem('isAdminAuthenticated', 'true');
-        toast({
-          title: "Success",
-          description: "Login successful. Redirecting to admin panel...",
-        });
-        router.push('/admin');
-      } catch (e) {
-        setError("Could not set authentication status. LocalStorage might be disabled or full.");
+    setIsLoading(true);
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      toast({
+        title: "Success",
+        description: "Login successful. Redirecting to admin panel...",
+      });
+      router.push('/admin');
+    } catch (e) {
+      const firebaseError = e as FirebaseError;
+      let errorMessage = "Login failed. Please check your credentials.";
+      if (firebaseError.code === 'auth/user-not-found' || firebaseError.code === 'auth/wrong-password' || firebaseError.code === 'auth/invalid-credential') {
+        errorMessage = "Invalid email or password.";
+      } else if (firebaseError.code === 'auth/invalid-email') {
+        errorMessage = "Invalid email format.";
       }
-    } else {
-      setError('Incorrect password. Please try again.');
+      setError(errorMessage);
       toast({
         title: "Login Failed",
-        description: "Incorrect password.",
+        description: errorMessage,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -51,11 +58,26 @@ export default function AdminLoginPage() {
           <LogIn className="mx-auto h-12 w-12 text-primary mb-4" />
           <CardTitle className="text-2xl font-bold">Admin Login</CardTitle>
           <CardDescription>
-            Please enter the password to access the admin panel.
+            Please enter your admin credentials to access the panel.
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="admin@example.com"
+                  className="pl-10 bg-background text-foreground border-input"
+                />
+              </div>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <Input
@@ -73,13 +95,10 @@ export default function AdminLoginPage() {
                 {error}
               </div>
             )}
-             <p className="text-xs text-muted-foreground text-center pt-2">
-              (Hint: for this prototype, the password is "{ADMIN_PASSWORD}")
-            </p>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full bg-background text-foreground hover:bg-background/90">
-              Login
+            <Button type="submit" className="w-full bg-background text-foreground hover:bg-background/90" disabled={isLoading}>
+              {isLoading ? 'Logging in...' : 'Login'}
             </Button>
           </CardFooter>
         </form>

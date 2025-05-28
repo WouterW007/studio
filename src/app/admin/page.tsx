@@ -4,78 +4,91 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminTable from '@/components/admin/AdminTable';
-import { MOCK_GROUPS } from '@/data/mockData'; // In real app, fetch from DB and use server actions/API
+import { MOCK_GROUPS } from '@/data/mockData'; // In real app, fetch from DB
 import type { Group } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { ShieldCheck, Loader2, AlertTriangle } from 'lucide-react'; // Removed LogOut
+import { ShieldCheck, Loader2, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { auth } from '@/lib/firebase';
+import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 
 export default function AdminPage() {
   const [groups, setGroups] = useState<Group[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const router = useRouter();
   const { toast } = useToast();
 
   useEffect(() => {
-    // WARNING: This is a non-secure client-side check for prototyping.
-    // DO NOT use this in a production environment.
-    try {
-      const authStatus = localStorage.getItem('isAdminAuthenticated');
-      if (authStatus === 'true') {
-        setIsAuthenticated(true);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUser(user);
+        // Here you might want to check if the user has admin privileges
+        // For now, any authenticated user can access.
       } else {
+        setCurrentUser(null);
         router.replace('/admin/login');
       }
-    } catch (e) {
-      // Likely localStorage is not available (e.g. SSR or security settings)
-      console.error("LocalStorage access error, redirecting to login:", e);
-      router.replace('/admin/login');
-    } finally {
       setIsAuthLoading(false);
-    }
+    });
+
+    return () => unsubscribe();
   }, [router]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      setIsLoading(true);
+    if (currentUser) {
+      setIsLoadingData(true);
+      // Simulate fetching groups for the admin
       setTimeout(() => {
-        setGroups(MOCK_GROUPS);
-        setIsLoading(false);
+        setGroups(MOCK_GROUPS); // Replace with actual data fetching
+        setIsLoadingData(false);
       }, 500);
     }
-  }, [isAuthenticated]);
+  }, [currentUser]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      localStorage.removeItem('isAdminAuthenticated');
-    } catch (e) {
-      console.error("Error removing item from localStorage:", e);
+      await signOut(auth);
+      toast({
+        title: "Logged Out",
+        description: "You have been logged out successfully.",
+      });
+      router.push('/admin/login');
+    } catch (error) {
+      console.error("Error logging out:", error);
+      toast({
+        title: "Logout Failed",
+        description: "Could not log you out. Please try again.",
+        variant: "destructive",
+      });
     }
-    setIsAuthenticated(false);
-    toast({
-      title: "Logged Out",
-      description: "You have been logged out successfully.",
-    });
-    router.push('/admin/login');
   };
 
   const handleUpdateStatus = async (groupId: string, status: Group['status']) => {
     console.log(`Updating group ${groupId} to status ${status}`);
+    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 500));
     setGroups(prevGroups =>
       prevGroups.map(group =>
         group.id === groupId ? { ...group, status } : group
       )
     );
+     toast({
+        title: "Status Opgedateer",
+        description: `Groep status suksesvol verander na ${status}.`,
+      });
   };
   
   const handleDeleteGroup = async (groupId: string) => {
     console.log(`Deleting group ${groupId}`);
+    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 500));
     setGroups(prevGroups => prevGroups.filter(group => group.id !== groupId));
+    toast({
+      title: "Groep Verwyder",
+      description: `Groep ${groupId} is suksesvol verwyder.`,
+    });
   };
 
   if (isAuthLoading) {
@@ -87,9 +100,9 @@ export default function AdminPage() {
     );
   }
 
-  if (!isAuthenticated) {
-    // This case should ideally be handled by the redirect,
-    // but it's a fallback / avoids rendering content before redirect.
+  if (!currentUser) {
+    // This case is mostly handled by the redirect in onAuthStateChanged,
+    // but it's a fallback or avoids rendering content before redirect.
     return (
        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
         <ShieldCheck className="h-16 w-16 text-destructive animate-pulse mb-4" />
@@ -98,11 +111,11 @@ export default function AdminPage() {
     );
   }
 
-  if (isLoading) {
+  if (isLoadingData) {
     return (
        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
-        <ShieldCheck className="h-16 w-16 text-primary animate-pulse mb-4" />
-        <p className="text-xl text-muted-foreground">Laai admin paneel...</p>
+        <Loader2 className="h-16 w-16 text-primary animate-spin mb-4" />
+        <p className="text-xl text-muted-foreground">Laai admin paneel data...</p>
       </div>
     );
   }
@@ -121,7 +134,6 @@ export default function AdminPage() {
                 </CardDescription>
               </div>
             </div>
-            {/* Logout button removed from here */}
           </div>
         </CardHeader>
         <CardContent>
@@ -129,15 +141,15 @@ export default function AdminPage() {
             groups={groups} 
             onUpdateStatus={handleUpdateStatus} 
             onDeleteGroup={handleDeleteGroup}
-            onLogout={handleLogout} // Pass handleLogout as a prop
+            onLogout={handleLogout}
           />
         </CardContent>
       </Card>
        <div className="text-center p-4 mt-4 border border-destructive/50 bg-destructive/10 rounded-md">
-        <p className="text-destructive font-semibold flex items-center justify-center"><AlertTriangle className="h-5 w-5 mr-2" />Waarskuwing</p>
+        <p className="text-destructive font-semibold flex items-center justify-center"><AlertTriangle className="h-5 w-5 mr-2" />Belangrik</p>
         <p className="text-destructive/80 text-sm">
-          Hierdie admin paneel gebruik 'n basiese, nie-veilige aanmeldmeganisme slegs vir prototipe doeleindes.
-          Moet dit NIE in 'n produksie-omgewing gebruik sonder behoorlike, veilige stawing nie.
+          Admin toegang word nou deur Firebase Authentication bestuur. Vir 'n volledige oplossing,
+          oorweeg dit om Firebase Custom Claims te gebruik om spesifieke admin rolle af te dwing.
         </p>
       </div>
     </div>
