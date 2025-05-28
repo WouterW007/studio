@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, Clock, FileDown, RefreshCw, Trash2 } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, FileDown, RefreshCw, Trash2, LogOut } from 'lucide-react'; // Added LogOut
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,11 +31,12 @@ import { Card } from '../ui/card';
 
 interface AdminTableProps {
   groups: Group[];
-  onUpdateStatus: (groupId: string, status: Group['status']) => Promise<void>; // Returns a promise for async operations
+  onUpdateStatus: (groupId: string, status: Group['status']) => Promise<void>;
   onDeleteGroup: (groupId: string) => Promise<void>;
+  onLogout: () => void; // New prop for logout handler
 }
 
-export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: AdminTableProps) {
+export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup, onLogout }: AdminTableProps) {
   const [actioningGroupId, setActioningGroupId] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -91,7 +92,6 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
   };
   
   const exportToCSV = () => {
-    // Basic CSV export
     const headers = ["ID", "Groepnaam", "Leier Naam", "Leier Kontak", "Status", "Primêre Fokus", "Ligging", "Dag", "Tyd", "Kapasiteit", "Huidige Lede"];
     const rows = groups.map(group => [
       group.id,
@@ -121,9 +121,13 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
 
   return (
     <div className="space-y-4">
-       <div className="flex justify-end">
+       <div className="flex justify-end space-x-2 mb-4"> {/* Added mb-4 for spacing below buttons */}
         <Button onClick={exportToCSV} variant="outline">
           <FileDown className="mr-2 h-4 w-4" /> Uitvoer na CSV
+        </Button>
+        <Button onClick={onLogout} variant="outline" size="sm">
+          <LogOut className="mr-2 h-4 w-4" />
+          Log Uit
         </Button>
       </div>
       <Card className="bg-white text-neutral-900 border-neutral-200 shadow-md">
@@ -216,5 +220,3 @@ export default function AdminTable({ groups, onUpdateStatus, onDeleteGroup }: Ad
     </div>
   );
 }
-
-    

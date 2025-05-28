@@ -8,7 +8,7 @@ import { MOCK_GROUPS } from '@/data/mockData'; // In real app, fetch from DB and
 import type { Group } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ShieldCheck, LogOut, Loader2, AlertTriangle } from 'lucide-react'; // Added AlertTriangle
+import { ShieldCheck, Loader2, AlertTriangle } from 'lucide-react'; // Removed LogOut
 import { useToast } from '@/hooks/use-toast';
 
 export default function AdminPage() {
@@ -121,14 +121,16 @@ export default function AdminPage() {
                 </CardDescription>
               </div>
             </div>
-            <Button onClick={handleLogout} variant="outline" size="sm">
-              <LogOut className="mr-2 h-4 w-4" />
-              Log Uit
-            </Button>
+            {/* Logout button removed from here */}
           </div>
         </CardHeader>
         <CardContent>
-          <AdminTable groups={groups} onUpdateStatus={handleUpdateStatus} onDeleteGroup={handleDeleteGroup} />
+          <AdminTable 
+            groups={groups} 
+            onUpdateStatus={handleUpdateStatus} 
+            onDeleteGroup={handleDeleteGroup}
+            onLogout={handleLogout} // Pass handleLogout as a prop
+          />
         </CardContent>
       </Card>
        <div className="text-center p-4 mt-4 border border-destructive/50 bg-destructive/10 rounded-md">
