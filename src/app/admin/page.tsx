@@ -7,7 +7,7 @@ import AdminTable from '@/components/admin/AdminTable';
 import { MOCK_GROUPS } from '@/data/mockData'; // In real app, fetch from DB
 import type { Group } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldCheck, Loader2, AlertTriangle } from 'lucide-react';
+import { ShieldCheck, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
@@ -145,13 +145,6 @@ export default function AdminPage() {
           />
         </CardContent>
       </Card>
-       <div className="text-center p-4 mt-4 border border-destructive/50 bg-destructive/10 rounded-md">
-        <p className="text-destructive font-semibold flex items-center justify-center"><AlertTriangle className="h-5 w-5 mr-2" />Belangrik</p>
-        <p className="text-destructive/80 text-sm">
-          Admin toegang word nou deur Firebase Authentication bestuur. Vir 'n volledige oplossing,
-          oorweeg dit om Firebase Custom Claims te gebruik om spesifieke admin rolle af te dwing.
-        </p>
-      </div>
     </div>
   );
 }
