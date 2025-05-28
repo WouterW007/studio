@@ -11,13 +11,13 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-semibold text-foreground mb-4">Volg Ons</h3>
             <div className="flex space-x-4">
-              <Link href="#" aria-label="Facebook" className="text-foreground/80 hover:text-foreground transition-colors">
+              <Link href="https://www.facebook.com/bfnbaptiste/?locale=af_ZA" aria-label="Facebook" className="text-foreground/80 hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">
                 <Facebook size={28} />
               </Link>
-              <Link href="#" aria-label="YouTube" className="text-foreground/80 hover:text-foreground transition-colors">
+              <Link href="https://www.youtube.com/@BfnBaptisteKerk" aria-label="YouTube" className="text-foreground/80 hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">
                 <Youtube size={28} />
               </Link>
-              <Link href="#" aria-label="Instagram" className="text-foreground/80 hover:text-foreground transition-colors">
+              <Link href="https://www.instagram.com/bfn_baptiste/?hl=en" aria-label="Instagram" className="text-foreground/80 hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">
                 <Instagram size={28} />
               </Link>
             </div>
