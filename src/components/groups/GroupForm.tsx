@@ -50,6 +50,7 @@ const groupFormSchema = z.object({
   secondaryFocus: z.array(z.custom<FocusCategoryKey>(val => FOCUS_CATEGORIES.some(fc => fc.key === val))).optional(),
   capacity: z.coerce.number().min(1, "Kapasiteit moet ten minste 1 wees.").positive("Kapasiteit moet 'n positiewe getal wees."),
   description: z.string().max(500, "Beskrywing mag nie meer as 500 karakters wees nie.").optional(),
+  image: z.string().url("Voer asseblief 'n geldige URL in.").or(z.literal('')).optional(),
   expiryDate: z.date().optional(),
 });
 // Define options for targetAudience explicitly with values and labels
@@ -71,6 +72,7 @@ type GroupFormValues = z.infer<typeof groupFormSchema>;
 const defaultValues: Partial<GroupFormValues> = {
   childcareAvailable: false,
   capacity: 10,
+  image: "",
 };
 
 export function GroupForm() {
@@ -343,6 +345,21 @@ export function GroupForm() {
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="image"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Groep Prentjie URL (Opsioneel)</FormLabel>
+              <FormControl>
+                <Input placeholder="https://voorbeeld.com/prentjie.jpg" {...field} value={field.value ?? ""} />
+              </FormControl>
+              <FormDescription>Plak 'n direkte skakel (URL) na 'n prentjie vir jou groep.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <FormField
