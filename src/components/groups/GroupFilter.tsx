@@ -1,3 +1,4 @@
+
 "use client";
 
 import type React from 'react';
@@ -16,6 +17,8 @@ interface GroupFilterProps {
   initialFilters?: FilterOptions;
 }
 
+const ALL_FILTER_VALUE = "all"; // Use a constant for the "all" value
+
 export default function GroupFilter({ onFilterChange, initialFilters = {} }: GroupFilterProps) {
   const [filters, setFilters] = useState<FilterOptions>(initialFilters);
   const [mounted, setMounted] = useState(false);
@@ -29,8 +32,11 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
     setFilters(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSelectChange = (name: keyof FilterOptions) => (value: string) => {
-    setFilters(prev => ({ ...prev, [name]: value || undefined }));
+  const handleSelectChange = (name: keyof Omit<FilterOptions, 'area' | 'childcare'>) => (value: string) => {
+    setFilters(prev => ({
+      ...prev,
+      [name]: value === ALL_FILTER_VALUE ? undefined : value as any, // Cast as any, actual type is string matching enum
+    }));
   };
 
   const handleChildcareChange = (value: string) => {
@@ -49,7 +55,7 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
   
   if (!mounted) { // Prevents hydration mismatch for select defaultValue
     return (
-      <Card className="shadow-lg">
+      <Card className="shadow-lg sticky top-20">
         <CardHeader>
           <CardTitle className="flex items-center text-xl"><SlidersHorizontal className="mr-2 h-5 w-5" /> Filter Groepe</CardTitle>
         </CardHeader>
@@ -85,12 +91,12 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
 
           <div>
             <Label htmlFor="primaryFocus">Primêre Fokus</Label>
-            <Select name="primaryFocus" onValueChange={handleSelectChange("primaryFocus")} value={filters.primaryFocus}>
+            <Select name="primaryFocus" onValueChange={handleSelectChange("primaryFocus")} value={filters.primaryFocus || ALL_FILTER_VALUE}>
               <SelectTrigger id="primaryFocus">
                 <SelectValue placeholder="Alle Fokusse" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Alle Fokusse</SelectItem>
+                <SelectItem value={ALL_FILTER_VALUE}>Alle Fokusse</SelectItem>
                 {FOCUS_CATEGORIES.map(cat => (
                   <SelectItem key={cat.key} value={cat.key}>{cat.name}</SelectItem>
                 ))}
@@ -100,12 +106,12 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
 
           <div>
             <Label htmlFor="targetAudience">Teikengehoor</Label>
-            <Select name="targetAudience" onValueChange={handleSelectChange("targetAudience")} value={filters.targetAudience}>
+            <Select name="targetAudience" onValueChange={handleSelectChange("targetAudience")} value={filters.targetAudience || ALL_FILTER_VALUE}>
               <SelectTrigger id="targetAudience">
                 <SelectValue placeholder="Alle Gehore" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Alle Gehore</SelectItem>
+                <SelectItem value={ALL_FILTER_VALUE}>Alle Gehore</SelectItem>
                 {TARGET_AUDIENCES.map(aud => (
                   <SelectItem key={aud} value={aud}>{aud}</SelectItem>
                 ))}
@@ -115,12 +121,12 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
 
           <div>
             <Label htmlFor="meetingDay">Dag van die Week</Label>
-            <Select name="meetingDay" onValueChange={handleSelectChange("meetingDay")} value={filters.meetingDay}>
+            <Select name="meetingDay" onValueChange={handleSelectChange("meetingDay")} value={filters.meetingDay || ALL_FILTER_VALUE}>
               <SelectTrigger id="meetingDay">
                 <SelectValue placeholder="Alle Dae" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Alle Dae</SelectItem>
+                <SelectItem value={ALL_FILTER_VALUE}>Alle Dae</SelectItem>
                 {MEETING_DAYS.map(day => (
                   <SelectItem key={day} value={day}>{day}</SelectItem>
                 ))}
@@ -130,12 +136,12 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
 
           <div>
             <Label htmlFor="meetingTime">Tyd van die Dag</Label>
-            <Select name="meetingTime" onValueChange={handleSelectChange("meetingTime")} value={filters.meetingTime}>
+            <Select name="meetingTime" onValueChange={handleSelectChange("meetingTime")} value={filters.meetingTime || ALL_FILTER_VALUE}>
               <SelectTrigger id="meetingTime">
                 <SelectValue placeholder="Alle Tye" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Alle Tye</SelectItem>
+                <SelectItem value={ALL_FILTER_VALUE}>Alle Tye</SelectItem>
                 {MEETING_TIMES.map(time => (
                   <SelectItem key={time} value={time}>{time}</SelectItem>
                 ))}
@@ -145,12 +151,12 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
 
           <div>
             <Label htmlFor="meetingType">Vergadertipe</Label>
-            <Select name="meetingType" onValueChange={handleSelectChange("meetingType")} value={filters.meetingType}>
+            <Select name="meetingType" onValueChange={handleSelectChange("meetingType")} value={filters.meetingType || ALL_FILTER_VALUE}>
               <SelectTrigger id="meetingType">
                 <SelectValue placeholder="Alle Tipes" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Alle Tipes</SelectItem>
+                <SelectItem value={ALL_FILTER_VALUE}>Alle Tipes</SelectItem>
                 {MEETING_TYPES.map(type => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
@@ -185,3 +191,5 @@ export default function GroupFilter({ onFilterChange, initialFilters = {} }: Gro
     </Card>
   );
 }
+
+    
