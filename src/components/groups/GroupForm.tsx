@@ -31,6 +31,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { FOCUS_CATEGORIES, MEETING_DAYS, MEETING_TIMES, MEETING_FREQUENCIES, TARGET_AUDIENCES, MEETING_TYPES } from "@/lib/constants";
 import type { FocusCategoryKey, MeetingDay, MeetingTime, TargetAudience, MeetingType } from "@/types";
+import { collection, addDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 
@@ -83,20 +84,55 @@ export function GroupForm() {
   });
 
   async function onSubmit(data: GroupFormValues) {
-    // In a real app, this would submit to a backend/Firebase
     console.log(data);
-    // Mock submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
     
-    toast({
-      title: "Kleingroep Registrasie Ingedien",
-      description: (
-        <p>Dankie, {data.leaderName}! Jou kleingroep "{data.groupName}" is ingedien vir goedkeuring.</p>
-      ),
-      variant: "default",
-    });
+    // Ensure targetAudience is not undefined before sending to Firestore
+    const groupDataToSave = { ...data };
+    if (groupDataToSave.targetAudience === undefined) {
+        groupDataToSave.targetAudience = ""; // Or a suitable default value
+    }
+    try {
+      const { db } = await import("@/lib/firebase"); // Import db dynamically
+
+      const docRef = await addDoc(collection(db, "groups"), {
+        leaderName: data.leaderName,
+        leaderEmail: data.leaderEmail || null, // Store optional fields as null if empty
+        leaderCellphone: data.leaderCellphone || null,
+        groupName: data.groupName,
+        meetingDay: data.meetingDay,
+        meetingTime: data.meetingTime,
+        meetingFrequency: data.meetingFrequency,
+        meetingType: data.meetingType,
+        childcareAvailable: data.childcareAvailable,
+        location: data.location,
+        primaryFocus: data.primaryFocus,
+        secondaryFocus: data.secondaryFocus || null,
+        capacity: data.capacity,
+        description: data.description || null,
+        expiryDate: data.expiryDate || null,
+        targetAudience: groupDataToSave.targetAudience,
+        status: "pending", // Set initial status to pending
+        createdAt: new Date(), // Add a timestamp
+      });
+      console.log("Document written with ID: ", docRef.id);
+
+      toast({
+        title: "Kleingroep Registrasie Ingedien",
+        description: (<p>Dankie, {data.leaderName}! Jou kleingroep "{data.groupName}" is ingedien vir goedkeuring.</p>),
+        variant: "default",
+      });
+
     form.reset(); // Reset form after successful submission
     router.push('/'); // Redirect to home page
+
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      toast({
+        title: "Registrasie Fout",
+        description: "Daar was 'n fout met die indiening van jou kleingroep. Probeer asseblief weer.",
+        variant: "destructive",
+      });
+    }
   }
 
   return (
@@ -331,7 +367,7 @@ export function GroupForm() {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                     <SelectItem value={undefined as any}>Geen</SelectItem> {/* Use undefined for "None" selection */}
+                     <SelectItem key="none" value={undefined as any}>Geen</SelectItem> {/* Use undefined for "None" selection */}
                     {FOCUS_CATEGORIES.map(category => (
                       <SelectItem key={category.key} value={category.key}>{category.name}</SelectItem>
                     ))}

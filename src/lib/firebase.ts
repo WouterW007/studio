@@ -1,6 +1,7 @@
 
 import { initializeApp, getApps, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth } from 'firebase/auth';
+import { getFirestore, type Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -18,6 +19,12 @@ if (!getApps().length) {
   app = getApps()[0];
 }
 
-const auth: Auth = getAuth(app);
+const auth: Auth = getAuth(app)
+;
 
-export { app, auth };
+// Initialize Firestore
+let db: Firestore;
+if (typeof window !== 'undefined') { // Check if running in browser
+  db = getFirestore(app);
+}
+export { app, auth, db };

@@ -4,11 +4,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminTable from '@/components/admin/AdminTable';
+import { collection, getDocs, query } from 'firebase/firestore';
 import AnnouncementManager from '@/components/admin/AnnouncementManager';
 import { MOCK_GROUPS, MOCK_ANNOUNCEMENTS } from '@/data/mockData'; // In real app, fetch from DB
 import type { Group, Announcement } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShieldCheck, Loader2, Megaphone } from 'lucide-react';
+import { ShieldCheck, Loader2, Megaphone, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
