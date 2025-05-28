@@ -410,9 +410,9 @@ export function GroupForm() {
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
-                      variant={"outline"}
                       className={cn(
                         "w-[240px] pl-3 text-left font-normal",
+                        "bg-background border border-input text-foreground hover:bg-background/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-background",
                         !field.value && "text-muted-foreground"
                       )}
                     >
@@ -452,5 +452,4 @@ export function GroupForm() {
     </Form>
   );
 }
-
     
