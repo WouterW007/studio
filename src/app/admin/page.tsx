@@ -12,6 +12,12 @@ import { ShieldCheck, Loader2, Megaphone, CheckCircle, XCircle } from 'lucide-re
 import { useToast } from '@/hooks/use-toast';
 import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
+// Import functions for Cloud Functions
+import { getFunctions, httpsCallable } from 'firebase/functions';
+
+// Get the Cloud Functions instance
+const functions = getFunctions();
+const approveGroupCallable = httpsCallable(functions, 'approveGroup');
 
 export default function AdminPage() {
   const [groups, setGroups] = useState<Group[]>([]);
@@ -108,28 +114,36 @@ export default function AdminPage() {
   const handleUpdateStatus = async (groupId: string, status: Group['status'], currentSource: 'groups' | 'pendingGroups') => {
     console.log(`Attempting to update group ${groupId} to status ${status} from ${currentSource}`);
     try {
-      const batch = writeBatch(db);
-      const targetGroupRef = doc(db, 'groups', groupId); // Always move to/update in 'groups' collection
 
-      if (currentSource === 'pendingGroups') {
-        if (status === 'active') { // Approving a pending group
-          const pendingGroupDoc = pendingGroups.find(g => g.id === groupId);
-          if (pendingGroupDoc) {
-            const { id, ...groupData } = pendingGroupDoc; // eslint-disable-line @typescript-eslint/no-unused-vars
-            batch.set(targetGroupRef, { ...groupData, status: 'active' });
-            batch.delete(doc(db, 'pendingGroups', groupId));
-            await batch.commit();
+      if (currentSource === 'pendingGroups' && status === 'active') { // Approving a pending group via Cloud Function
+        console.log(`Calling Cloud Function to approve group ${groupId}`);
+        const result = await approveGroupCallable({ groupId });
+        console.log('Cloud Function result:', result);
 
-            setPendingGroups(prev => prev.filter(g => g.id !== groupId));
-            setGroups(prev => [...prev, { ...pendingGroupDoc, status: 'active'}]);
-            toast({
+        if (result.data && (result.data as any).status === 'success') {
+           // Find the approved group in pendingGroups state and move it to groups state
+           const approvedGroup = pendingGroups.find(g => g.id === groupId);
+           if(approvedGroup) {
+              setPendingGroups(prev => prev.filter(g => g.id !== groupId));
+              setGroups(prev => [...prev, { ...approvedGroup, status: 'active'}]);
+           }
+
+           toast({
               title: "Group Approved",
               description: `Group ${groupId} has been approved and moved to active groups.`,
               variant: "default",
               action: <CheckCircle className="text-green-500" />
             });
-          }
-        } else if (status === 'rejected' || status === 'pending') { // Rejecting or simply moving a pending group (should not happen for 'pending')
+        } else {
+            // Handle cases where the function call was successful but the operation failed server-side
+             toast({
+              title: "Status Update Failed",
+              description: `Cloud Function failed to approve group ${groupId}. ${result.data ? (result.data as any).message : 'Unknown error.'}`, // Display message from function if available
+              variant: "destructive",
+            });
+        }
+
+      } else if (currentSource === 'pendingGroups' && (status === 'rejected' || status === 'pending')) { // Rejecting or simply moving a pending group (should not happen for 'pending')
            // For now, just delete from pending if rejected. If it needs to go to 'groups' with 'rejected' status, adjust logic.
           await deleteDoc(doc(db, 'pendingGroups', groupId));
           setPendingGroups(prev => prev.filter(g => g.id !== groupId));
@@ -139,8 +153,9 @@ export default function AdminPage() {
             variant: "default",
              action: <XCircle className="text-red-500" />
           });
-        }
-      } else { // Updating status of an already active/rejected group in 'groups' collection
+      }
+      else if (currentSource === 'groups') { // Updating status of an already active/rejected group in 'groups' collection
+        const targetGroupRef = doc(db, 'groups', groupId);
         await updateDoc(targetGroupRef, { status });
         setGroups(prevGroups =>
           prevGroups.map(group =>

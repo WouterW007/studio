@@ -1,5 +1,7 @@
 {
   "include": [
-    ".eslintrc.js"
-  ]
+    "src/**/*",
+    "eslint.config.js" // Include the ESLint config file
+  ],
+  "extends": "./tsconfig.json"
 }
