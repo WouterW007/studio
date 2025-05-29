@@ -19,12 +19,7 @@ if (!getApps().length) {
   app = getApps()[0];
 }
 
-const auth: Auth = getAuth(app)
-;
+const auth: Auth = getAuth(app);
+const db: Firestore = getFirestore(app); // Initialize db unconditionally
 
-// Initialize Firestore
-let db: Firestore;
-if (typeof window !== 'undefined') { // Check if running in browser
-  db = getFirestore(app);
-}
 export { app, auth, db };

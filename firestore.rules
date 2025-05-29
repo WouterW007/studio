@@ -1,49 +1,46 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Users collection:
-    // - Authenticated users can read their own document.
-    // - Authenticated users can create their own document (registration).
-    // - Authenticated users can update their own document.
-    // - Admins can read and write all user documents.
+    // Rules for user data
     match /users/{userId} {
-      allow read: if request.auth != null && (request.auth.uid == userId || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true);
-      allow create: if request.auth != null && request.auth.uid == userId;
-      allow update: if request.auth != null && (request.auth.uid == userId || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true);
-      allow delete: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true; // Only admins can delete users
+        // Only authenticated users can read their own user document
+        allow read: if request.auth != null && request.auth.uid == userId;
+        // No creation or update allowed here directly; user creation happens via auth
+    }
+
+    // Pending Groups collection (for newly submitted groups awaiting approval):
+    // - Authenticated users can create new pending groups.
+    // - Admins can read, update, and delete pending group documents.
+    match /pendingGroups/{pendingGroupId} {
+      allow create: if request.auth != null;
+      allow read, update, delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+      // Allow listing for admins
+      allow list: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
     // Groups collection (for accepted groups):
-    // - Authenticated users can read accepted group documents (application will filter by status).
-    // - Admins can read, update, and delete any group document.
+    // - Allow public read and list access for groups with status 'active'
     match /groups/{groupId} {
-      allow list: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true; // Allow admins to list all groups
-      allow read: if request.auth != null; // Allow authenticated users to read individual groups
-      // create is not allowed directly into groups, only via admin approval process
-      allow update, delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
-    }
+      allow read, list: if resource.data.status == 'active'; // Allow anyone to read/list groups with status 'active'
 
-    // Pending Groups collection:
-    // - ANY user (authenticated or not) can create pending group documents.
-    // - Admins can read, list, update, and delete pending group documents.
-    match /pendingGroups/{pendingGroupId} {
-      allow create: if true;
-      allow read, list, update, delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+      // Keep existing admin rules for broader access/management
+      allow list: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true; // Admins can list all groups regardless of status
+      allow read: if request.auth != null; // Authenticated users can still read any group (useful if they were the submitter, for example - adjust if needed)
+      allow write: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true; // Only admins can write (create, update, delete)
     }
 
     // Announcements collection:
-    // - Authenticated users can read announcement documents.
-    // - Admins can create, update, and delete announcement documents.
+    // - Allow public read and list access for announcements
     match /announcements/{announcementId} {
-      allow read: if request.auth != null;
-      allow create, update, delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+      allow read, list: if true; // Allow anyone (authenticated or not) to read and list announcements
+      allow write: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true; // Only admins can write
     }
 
-    // Default rule: Deny access to all other collections
-    match /{document=**} {
-      allow read, write: if false;
+    // Helper function to check if a user is an admin (based on a flag in their user document)
+    function isAdmin() {
+      return request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
+
+
   }
 }
