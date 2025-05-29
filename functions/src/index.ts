@@ -7,15 +7,20 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import {onCall} from "firebase-functions/v2/https";
-import * as logger from "firebase-functions/logger";
-// Use CommonJS require for firebase-admin
-const admin = require('firebase-admin');
+const functions = require("firebase-functions/v2/https"); // Use require for runtime
+// Import specific types for TypeScript
+import type { CallableRequest } from "firebase-functions/v2/https";
 
-// Use this for Cloud Functions environment, configuration is automatic
+const logger = require("firebase-functions/logger");    // Use require
+const admin = require("firebase-admin");               // Use require
+
 admin.initializeApp();
-
 const db = admin.firestore();
+
+// Define an interface for the expected request data
+interface ApproveGroupRequestData {
+  groupId: string;
+}
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
@@ -25,14 +30,15 @@ const db = admin.firestore();
 //   response.send("Hello from Firebase!");
 // });
 
-export const approveGroup = onCall(async (request) => {
+// Use the imported CallableRequest type directly
+exports.approveGroup = functions.onCall(async (request: CallableRequest<ApproveGroupRequestData>) => { // Use exports
   logger.info("approveGroup function called",
     {data: request.data, auth: request.auth});
 
   // 1. Check if the user is authenticated
   if (!request.auth) {
     logger.warn("approveGroup called by unauthenticated user");
-    throw new https.HttpsError(
+    throw new functions.HttpsError( // This uses the 'functions' constant (runtime value)
       "unauthenticated",
       "Only authenticated users can approve groups."
     );
@@ -46,14 +52,14 @@ export const approveGroup = onCall(async (request) => {
     if (!userDoc.exists || userDoc.data()?.isAdmin !== true) {
       logger.warn(`User ${userId} is not an admin and attempted to ` +
                   "approve group.");
-      throw new https.HttpsError(
+      throw new functions.HttpsError( // Runtime value
         "permission-denied",
         "Only administrators can approve groups."
       );
     }
   } catch (error) {
     logger.error(`Error checking admin status for user ${userId}:`, error);
-    throw new https.HttpsError(
+    throw new functions.HttpsError( // Runtime value
       "internal",
       "Could not verify admin status.",
       error
@@ -66,7 +72,7 @@ export const approveGroup = onCall(async (request) => {
   if (!pendingGroupId || typeof pendingGroupId !== "string") {
     logger.warn("approveGroup called with invalid or missing groupId",
       {data: request.data});
-    throw new https.HttpsError(
+    throw new functions.HttpsError( // Runtime value
       "invalid-argument",
       "The function must be called with a valid groupId."
     );
@@ -80,9 +86,10 @@ export const approveGroup = onCall(async (request) => {
     // 4. Get the pending group data
     const pendingGroupDoc = await pendingGroupRef.get();
 
+    // CORRECTED LINE
     if (!pendingGroupDoc.exists) {
       logger.warn(`Pending group with ID ${pendingGroupId} not found.`);
-      throw new https.HttpsError("not-found",
+      throw new functions.HttpsError("not-found", // Runtime value
         "The pending group does not exist.");
     }
 
@@ -90,7 +97,7 @@ export const approveGroup = onCall(async (request) => {
 
     if (!groupData) {
       logger.error(`Pending group ${pendingGroupId} has no data.`);
-      throw new https.HttpsError("internal",
+      throw new functions.HttpsError("internal", // Runtime value
         "Pending group data is empty.");
     }
 
@@ -113,10 +120,10 @@ export const approveGroup = onCall(async (request) => {
   } catch (error) {
     logger.error(`Error approving group ${pendingGroupId}:`, error);
     // Re-throw the error as an HttpsError if it's not already one
-    if (error instanceof https.HttpsError) {
+    if (error instanceof functions.HttpsError) { // Runtime value check
       throw error;
     } else {
-      throw new https.HttpsError(
+      throw new functions.HttpsError( // Runtime value
         "internal",
         "An error occurred while approving the group.",
         error
@@ -125,5 +132,5 @@ export const approveGroup = onCall(async (request) => {
   }
 });
 
-// Need to import https to use https.HttpsError
-import * as https from "firebase-functions/v2/https";
+// The following import was removed as it was redundant and incorrect:
+// import * as https from "firebase-functions/v2/https";

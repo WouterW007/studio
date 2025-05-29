@@ -23,7 +23,7 @@ export default [
       // "quotes": ["error", "double"],
       // To allow unused variables (if needed, though not recommended):
       // "@typescript-eslint/no-unused-vars": "off",
-      "@typescript-eslint/no-require-imports": "off" // Temporarily disable this rule
+      "@typescript-eslint/no-require-imports": "error" // Re-enable this rule
     },
   },
 ];
