@@ -34,6 +34,7 @@ import type { FocusCategoryKey, MeetingDay, MeetingTime, TargetAudience, Meeting
 import { collection, addDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { auth } from "@/lib/firebase"; // Import auth
 
 
 const groupFormSchema = z.object({
@@ -85,6 +86,8 @@ export function GroupForm() {
 
   async function onSubmit(data: GroupFormValues) {
     console.log(data);
+
+    // REMOVED: Authentication check is removed as any user can submit
     
     // Ensure targetAudience is not undefined before sending to Firestore
     const groupDataToSave = { ...data };
@@ -94,7 +97,8 @@ export function GroupForm() {
     try {
       const { db } = await import("@/lib/firebase"); // Import db dynamically
 
-      const docRef = await addDoc(collection(db, "groups"), {
+      // Write to the pendingGroups collection instead of groups
+      const docRef = await addDoc(collection(db, "pendingGroups"), {
         leaderName: data.leaderName,
         leaderEmail: data.leaderEmail || null, // Store optional fields as null if empty
         leaderCellphone: data.leaderCellphone || null,
