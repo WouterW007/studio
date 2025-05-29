@@ -4,14 +4,13 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminTable from '@/components/admin/AdminTable';
-import { collection, getDocs, query } from 'firebase/firestore';
+import { collection, getDocs, query, doc, updateDoc, deleteDoc, addDoc, orderBy } from 'firebase/firestore'; // Import necessary Firestore functions
 import AnnouncementManager from '@/components/admin/AnnouncementManager';
-import { MOCK_GROUPS, MOCK_ANNOUNCEMENTS } from '@/data/mockData'; // In real app, fetch from DB
 import type { Group, Announcement } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldCheck, Loader2, Megaphone, XCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { auth } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { onAuthStateChanged, signOut, type User } from 'firebase/auth';
 
 export default function AdminPage() {
@@ -37,16 +36,46 @@ export default function AdminPage() {
   }, [router]);
 
   useEffect(() => {
-    if (currentUser) {
-      setIsLoadingData(true);
-      // Simulate fetching data for the admin
-      setTimeout(() => {
-        setGroups(MOCK_GROUPS); // Replace with actual data fetching
-        setAdminAnnouncements([...MOCK_ANNOUNCEMENTS].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())); // Also sort by most recent
-        setIsLoadingData(false);
-      }, 500);
-    }
-  }, [currentUser]);
+    const fetchAdminData = async () => {
+      if (currentUser) {
+        setIsLoadingData(true);
+        try {
+          // Fetch groups from Firestore
+          const groupsCollectionRef = collection(db, 'groups');
+          const groupSnapshot = await getDocs(groupsCollectionRef);
+          const groupsData = groupSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data() as Omit<Group, 'id'>
+          }));
+          setGroups(groupsData);
+
+          // Fetch announcements from Firestore, ordered by date descending
+          const announcementsCollectionRef = collection(db, 'announcements');
+          const q = query(announcementsCollectionRef, orderBy('date', 'desc'));
+          const announcementSnapshot = await getDocs(q);
+          const announcementsData = announcementSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data() as Omit<Announcement, 'id'>,
+            date: (doc.data().date as any).toDate() // Convert Firestore Timestamp to Date
+          }));
+          setAdminAnnouncements(announcementsData);
+
+        } catch (error) {
+          console.error("Error fetching admin data:", error);
+          toast({
+            title: "Data Fetch Error",
+            description: "Could not load admin data.",
+            variant: "destructive",
+          });
+        } finally {
+          setIsLoadingData(false);
+        }
+      }
+    };
+
+    fetchAdminData();
+
+  }, [currentUser, toast]);
 
   const handleLogout = async () => {
     try {
@@ -67,59 +96,99 @@ export default function AdminPage() {
   };
 
   const handleUpdateStatus = async (groupId: string, status: Group['status']) => {
-    console.log(`Updating group ${groupId} to status ${status}`);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setGroups(prevGroups =>
-      prevGroups.map(group =>
-        group.id === groupId ? { ...group, status } : group
-      )
-    );
-     toast({
-        title: "Status Opgedateer",
-        description: `Groep status suksesvol verander na ${status}.`,
+    console.log(`Attempting to update group ${groupId} to status ${status}`);
+    try {
+      const groupRef = doc(db, 'groups', groupId);
+      await updateDoc(groupRef, {
+        status: status
       });
+      setGroups(prevGroups =>
+        prevGroups.map(group =>
+          group.id === groupId ? { ...group, status } : group
+        )
+      );
+       toast({
+          title: "Status Opgedateer",
+          description: `Groep status suksesvol verander na ${status}.`,
+        });
+    } catch (error) {
+      console.error("Error updating group status:", error);
+       toast({
+          title: "Status Update Failed",
+          description: `Kon nie groep ${groupId} status opdateer nie.`,
+          variant: "destructive",
+        });
+    }
   };
-  
+
   const handleDeleteGroup = async (groupId: string) => {
-    console.log(`Deleting group ${groupId}`);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 500));
-    setGroups(prevGroups => prevGroups.filter(group => group.id !== groupId));
-    toast({
-      title: "Groep Verwyder",
-      description: `Groep ${groupId} is suksesvol verwyder.`,
-    });
+    console.log(`Attempting to delete group ${groupId}`);
+    try {
+      await deleteDoc(doc(db, 'groups', groupId));
+      setGroups(prevGroups => prevGroups.filter(group => group.id !== groupId));
+      toast({
+        title: "Groep Verwyder",
+        description: `Groep ${groupId} is suksesvol verwyder.`,
+      });
+    } catch (error) {
+      console.error("Error deleting group:", error);
+      toast({
+        title: "Groep Verwyder Misluk",
+        description: `Kon nie groep ${groupId} verwyder nie.`,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleAddAnnouncement = async (data: { title: string; content: string; category?: string }) => {
-    const newAnnouncement: Announcement = {
-      id: `anc${Date.now()}_${Math.random().toString(36).substring(2, 7)}`, // More unique ID
-      title: data.title,
-      content: data.content,
-      category: data.category || "General",
-      date: new Date(),
-    };
-    // For prototype: Add to MOCK_ANNOUNCEMENTS directly so it persists across soft reloads IF mockData.ts isn't re-evaluated
-    MOCK_ANNOUNCEMENTS.unshift(newAnnouncement);
-    setAdminAnnouncements(prevAnnouncements => [newAnnouncement, ...prevAnnouncements]);
-    toast({
-      title: "Aankondiging Gepos",
-      description: `"${data.title}" is by die kennisgewingbord gevoeg.`,
-    });
+     console.log(`Attempting to add announcement`);
+    try {
+      const announcementsCollectionRef = collection(db, 'announcements');
+       const newAnnouncementRef = await addDoc(announcementsCollectionRef, {
+        title: data.title,
+        content: data.content,
+        category: data.category || "General",
+        date: new Date(),
+      });
+       const newAnnouncement: Announcement = {
+        id: newAnnouncementRef.id,
+        title: data.title,
+        content: data.content,
+        category: data.category || "General",
+        date: new Date(),
+      };
+      setAdminAnnouncements(prevAnnouncements => [newAnnouncement, ...prevAnnouncements]);
+      toast({
+        title: "Aankondiging Gepos",
+        description: `"${data.title}" is by die kennisgewingbord gevoeg.`,
+      });
+    } catch (error) {
+      console.error("Error adding announcement:", error);
+       toast({
+        title: "Aankondiging Misluk",
+        description: `Kon nie aankondiging plaas nie.`,
+        variant: "destructive",
+      });
+    }
   };
 
   const handleDeleteAnnouncement = async (announcementId: string) => {
-    // For prototype: Remove from MOCK_ANNOUNCEMENTS
-    const index = MOCK_ANNOUNCEMENTS.findIndex(ann => ann.id === announcementId);
-    if (index > -1) {
-      MOCK_ANNOUNCEMENTS.splice(index, 1);
+    console.log(`Attempting to delete announcement ${announcementId}`);
+    try {
+      await deleteDoc(doc(db, 'announcements', announcementId));
+      setAdminAnnouncements(prevAnnouncements => prevAnnouncements.filter(ann => ann.id !== announcementId));
+      toast({
+        title: "Aankondiging Verwyder",
+        description: "Die aankondiging is van die kennisgewingbord verwyder.",
+      });
+    } catch (error) {
+      console.error("Error deleting announcement:", error);
+       toast({
+        title: "Aankondiging Verwyder Misluk",
+        description: `Kon nie aankondiging ${announcementId} verwyder nie.`,
+        variant: "destructive",
+      });
     }
-    setAdminAnnouncements(prevAnnouncements => prevAnnouncements.filter(ann => ann.id !== announcementId));
-    toast({
-      title: "Aankondiging Verwyder",
-      description: "Die aankondiging is van die kennisgewingbord verwyder.",
-    });
   };
 
 
