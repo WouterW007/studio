@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,50 +28,43 @@ import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { FOCUS_CATEGORIES, MEETING_DAYS, MEETING_TIMES, MEETING_FREQUENCIES, TARGET_AUDIENCES, MEETING_TYPES } from "@/lib/constants";
+import { FOCUS_CATEGORIES, MEETING_DAYS, MEETING_TIMES, MEETING_FREQUENCIES, TARGET_AUDIENCES, MEETING_TYPES, AREAS } from "@/lib/constants"; 
 import type { FocusCategoryKey, MeetingDay, MeetingTime, TargetAudience, MeetingType } from "@/types";
 import { collection, addDoc } from "firebase/firestore";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import { auth } from "@/lib/firebase"; // Import auth
 
+
+const targetAudienceValues = TARGET_AUDIENCES;
 
 const groupFormSchema = z.object({
   leaderName: z.string().min(2, "Leier se naam moet ten minste 2 karakters lank wees."),
   leaderEmail: z.string().email("Ongeldige e-posadres.").or(z.literal('')).optional(),
-  leaderCellphone: z.string().optional(), // Basic string validation for now
+  leaderCellphone: z.string().optional(),
   groupName: z.string().min(3, "Groepnaam moet ten minste 3 karakters lank wees."),
   meetingDay: z.enum(MEETING_DAYS as [MeetingDay, ...MeetingDay[]], { required_error: "Kies 'n vergaderdag." }),
   meetingTime: z.enum(MEETING_TIMES as [MeetingTime, ...MeetingTime[]], { required_error: "Kies 'n vergadertyd." }),
   meetingFrequency: z.string().min(1, "Kies 'n vergaderfrekwensie."),
   meetingType: z.enum(MEETING_TYPES as [MeetingType, ...MeetingType[]], { required_error: "Kies 'n vergadertipe." }),
   childcareAvailable: z.boolean().default(false),
-  location: z.string().min(3, "Ligging moet ten minste 3 karakters lank wees."),
+  location: z.enum(AREAS as [string, ...string[]], { required_error: "Kies 'n area/ligging." }), 
   primaryFocus: z.custom<FocusCategoryKey>(val => FOCUS_CATEGORIES.some(fc => fc.key === val), {message: "Kies 'n primêre fokus."}),
-  secondaryFocus: z.array(z.custom<FocusCategoryKey>(val => FOCUS_CATEGORIES.some(fc => fc.key === val))).optional(),
-  capacity: z.coerce.number().min(1, "Kapasiteit moet ten minste 1 wees.").positive("Kapasiteit moet 'n positiewe getal wees."),
-  description: z.string().max(500, "Beskrywing mag nie meer as 500 karakters wees nie.").optional(),
-  expiryDate: z.date().optional(),
+  secondaryFocus: z.array(z.custom<FocusCategoryKey>(val => FOCUS_CATEGORIES.some(fc => fc.key === val))).optional().nullable(),
+  capacity: z.coerce.number().min(1, "Kapasiteit moet ten minste 1 wees.").positive("Kapasiteit moet 'n positiewe getal wees.").nullable(),
+  description: z.string().max(500, "Beskrywing mag nie meer as 500 karakters wees nie.").optional().nullable(),
+  expiryDate: z.date().optional().nullable(),
+  targetAudience: z.enum(targetAudienceValues as [string, ...string[]], { required_error: "Kies 'n teikengehoor." }),
 });
-// Define options for targetAudience explicitly with values and labels
-const targetAudienceOptions = [
-  { value: "Men", label: "Mans" },
-  { value: "Women", label: "Vroue" },
-  { value: "Mixed Adults", label: "Gemengde Volwassenes" },
-  { value: "Young Adults (18-25)", label: "Jong Volwassenes (18-25)" },
-  { value: "Youth (12-17)", label: "Jeug (12-17)" },
-  { value: "Seniors (60+)", label: "Seniors (60+)" },
-  { value: "Families", label: "Gesinne" },
-];
 
-// Extract values for zod enum validation
-const targetAudienceValues = targetAudienceOptions.map(option => option.value);
-groupFormSchema.extend({ targetAudience: z.enum(targetAudienceValues as [TargetAudience, ...TargetAudience[]], { required_error: "Kies 'n teikengehoor." }), });
 type GroupFormValues = z.infer<typeof groupFormSchema>;
 
 const defaultValues: Partial<GroupFormValues> = {
   childcareAvailable: false,
-  capacity: 10,
+  capacity: 10, // Default capacity
+  secondaryFocus: [], 
+  targetAudience: TARGET_AUDIENCES[0], // Default target audience
+  description: '', // Default description to empty string
+  expiryDate: undefined, // Default expiryDate to undefined
 };
 
 export function GroupForm() {
@@ -87,20 +79,12 @@ export function GroupForm() {
   async function onSubmit(data: GroupFormValues) {
     console.log(data);
 
-    // REMOVED: Authentication check is removed as any user can submit
-    
-    // Ensure targetAudience is not undefined before sending to Firestore
-    const groupDataToSave = { ...data };
-    if (groupDataToSave.targetAudience === undefined) {
-        groupDataToSave.targetAudience = ""; // Or a suitable default value
-    }
     try {
-      const { db } = await import("@/lib/firebase"); // Import db dynamically
+      const { db } = await import("@/lib/firebase"); 
 
-      // Write to the pendingGroups collection instead of groups
-      const docRef = await addDoc(collection(db, "pendingGroups"), {
+      const groupDataToSave = {
         leaderName: data.leaderName,
-        leaderEmail: data.leaderEmail || null, // Store optional fields as null if empty
+        leaderEmail: data.leaderEmail || null, 
         leaderCellphone: data.leaderCellphone || null,
         groupName: data.groupName,
         meetingDay: data.meetingDay,
@@ -108,16 +92,18 @@ export function GroupForm() {
         meetingFrequency: data.meetingFrequency,
         meetingType: data.meetingType,
         childcareAvailable: data.childcareAvailable,
-        location: data.location,
+        location: data.location, 
         primaryFocus: data.primaryFocus,
-        secondaryFocus: data.secondaryFocus || null,
-        capacity: data.capacity,
+        secondaryFocus: (data.secondaryFocus && data.secondaryFocus.length > 0) ? data.secondaryFocus : null, 
+        capacity: data.capacity ?? null, 
         description: data.description || null,
         expiryDate: data.expiryDate || null,
-        targetAudience: groupDataToSave.targetAudience,
-        status: "pending", // Set initial status to pending
-        createdAt: new Date(), // Add a timestamp
-      });
+        targetAudience: data.targetAudience,
+        status: "pending", 
+        createdAt: new Date(), 
+      };
+
+      const docRef = await addDoc(collection(db, "pendingGroups"), groupDataToSave);
       console.log("Document written with ID: ", docRef.id);
 
       toast({
@@ -126,14 +112,14 @@ export function GroupForm() {
         variant: "default",
       });
 
-    form.reset(); // Reset form after successful submission
-    router.push('/'); // Redirect to home page
+    form.reset(); 
+    router.push('/'); 
 
     } catch (e) {
       console.error("Error adding document: ", e);
       toast({
         title: "Registrasie Fout",
-        description: "Daar was 'n fout met die indiening van jou kleingroep. Probeer asseblief weer.",
+        description: "Daar was 'n fout met die indiening van jou kleingroep. Probeer asseblief weer. Fout: " + (e instanceof Error ? e.message : String(e)),
         variant: "destructive",
       });
     }
@@ -142,6 +128,7 @@ export function GroupForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Leader Name, Email, Cellphone */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FormField
             control={form.control}
@@ -157,7 +144,7 @@ export function GroupForm() {
             )}
           />
           <FormField
-            control={form.control} // Assuming leaderEmail is now optional in your schema
+            control={form.control}
             name="leaderEmail"
             render={({ field }) => (
               <FormItem>
@@ -170,7 +157,7 @@ export function GroupForm() {
             )}
           />
            <FormField
-            control={form.control} // Assuming leaderCellphone is now optional in your schema
+            control={form.control}
             name="leaderCellphone"
             render={({ field }) => (
               <FormItem>
@@ -178,13 +165,13 @@ export function GroupForm() {
                 <FormControl>
                   <Input placeholder="082 1234567" {...field} />
                 </FormControl>
-                
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
 
+        {/* Group Name */}
         <FormField
           control={form.control}
           name="groupName"
@@ -199,6 +186,7 @@ export function GroupForm() {
           )}
         />
 
+        {/* Meeting Day, Time, Frequency */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <FormField
             control={form.control}
@@ -268,6 +256,7 @@ export function GroupForm() {
           />
         </div>
         
+        {/* Meeting Type, Target Audience */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FormField
             control={form.control}
@@ -297,20 +286,16 @@ export function GroupForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Teikengehoor</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Kies teikengehoor" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {/* Use the new targetAudienceOptions array */}
-                    {targetAudienceOptions.map((audience) => (
-                      <SelectItem
-                        key={audience.value} // Use value as key for consistency
-                        value={audience.value}
-                      >
-                        {audience.label}
+                    {TARGET_AUDIENCES.map((audience) => (
+                      <SelectItem key={audience} value={audience}>
+                        {audience}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -321,20 +306,31 @@ export function GroupForm() {
           />
         </div>
         
+        {/* Location / Area */}
         <FormField
           control={form.control}
           name="location"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Ligging / Area</FormLabel>
-              <FormControl>
-                <Input placeholder="bv. Kerk / Aanlyn via Zoom" {...field} />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Kies 'n area" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {AREAS.map(area => (
+                    <SelectItem key={area} value={area}>{area}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
         />
 
+        {/* Primary Focus, Secondary Focus */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FormField
             control={form.control}
@@ -364,14 +360,19 @@ export function GroupForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Sekondêre Fokus (Opsioneel)</FormLabel>
-                 <Select onValueChange={(value) => field.onChange(value ? [value as FocusCategoryKey] : [])} >{/* Simplified for single secondary focus for now */}
+                 <Select 
+                    onValueChange={(value) => {
+                        field.onChange(value === "none" ? [] : [value as FocusCategoryKey]); 
+                    }} 
+                    value={field.value && field.value.length > 0 ? field.value[0] : "none"}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Kies sekondêre fokus" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                     <SelectItem key="none" value={undefined as any}>Geen</SelectItem> {/* Use undefined for "None" selection */}
+                     <SelectItem value="none">Geen</SelectItem> 
                     {FOCUS_CATEGORIES.map(category => (
                       <SelectItem key={category.key} value={category.key}>{category.name}</SelectItem>
                     ))}
@@ -384,6 +385,7 @@ export function GroupForm() {
           />
         </div>
 
+        {/* Capacity, Childcare */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
             <FormField
               control={form.control}
@@ -392,7 +394,16 @@ export function GroupForm() {
                 <FormItem>
                   <FormLabel>Kapasiteit (Aantal Mense)</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="bv. 10" {...field} />
+                    <Input 
+                        type="number" 
+                        placeholder="bv. 10" 
+                        {...field} 
+                        value={field.value ?? ''} // Handle null/undefined for value
+                        onChange={(e) => {
+                            const value = e.target.value;
+                            field.onChange(value === '' ? null : parseInt(value, 10));
+                        }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -422,6 +433,7 @@ export function GroupForm() {
               />
         </div>
         
+        {/* Description */}
         <FormField
           control={form.control}
           name="description"
@@ -433,6 +445,7 @@ export function GroupForm() {
                   placeholder="Vertel ons 'n bietjie meer oor die groep..."
                   className="resize-none"
                   {...field}
+                  value={field.value ?? ''} // Handle null/undefined for value
                 />
               </FormControl>
               <FormMessage />
@@ -440,6 +453,7 @@ export function GroupForm() {
           )}
         />
 
+        {/* Expiry Date */}
         <FormField
           control={form.control}
           name="expiryDate"
@@ -469,7 +483,7 @@ export function GroupForm() {
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
-                    selected={field.value}
+                    selected={field.value ?? undefined} // Handle null for selected
                     onSelect={field.onChange}
                     disabled={(date) =>
                       date < new Date() || date < new Date("1900-01-01")
@@ -497,7 +511,3 @@ export function GroupForm() {
     </Form>
   );
 }
-    
-
-    
-

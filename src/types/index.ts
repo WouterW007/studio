@@ -1,25 +1,41 @@
 import type { LucideIcon } from 'lucide-react';
 
+// Define User interface
+export interface User {
+  id: string;
+  name: string;
+  email?: string;
+  isAdmin?: boolean;
+  avatarUrl?: string; // For profile pictures
+  // other fields...
+}
+
 export interface Group {
   id: string;
-  leaderName: string;
-  leaderContact: string; // Could be email or phone
+  leaderName: string; // This can remain for quick display if leaderId isn't resolved
+  leaderContact: string; 
   groupName: string;
   meetingDay: MeetingDay;
   meetingTime: MeetingTime;
-  meetingFrequency: string; // e.g., "Weekly", "Bi-weekly", "Monthly"
-  meetingType: MeetingType; // "Physical" | "Online"
+  meetingFrequency: string; 
+  meetingType: MeetingType; 
   targetAudience: TargetAudience;
   childcareAvailable: boolean;
-  location: string; // Area or specific address
+  location: string; 
   primaryFocus: FocusCategoryKey;
-  secondaryFocus?: FocusCategoryKey[]; // Optional, can be multiple
+  secondaryFocus?: FocusCategoryKey[]; 
   capacity: number;
-  currentMembers: number; // For display like "8/10 spots"
+  currentMembers: number; 
   description?: string;
   expiryDate?: Date;
-  status: "pending" | "active" | "rejected"; // For admin - Standardized
-  image?: string; // Optional image URL for the group
+  status: "pending" | "active" | "rejected"; 
+  image?: string; 
+  // Added fields for leader and members linking to User collection
+  leaderId: string; // Store ID of the leader (from 'users' collection)
+  members: string[]; // Array of user IDs (from 'users' collection)
+  createdAt?: any; // Firestore Timestamp or Date (as per your example)
+  // Optional: category field as per your example if different from primaryFocus
+  category?: string; // Example: GroupCategory type or string
 }
 
 export interface Announcement {
@@ -27,7 +43,7 @@ export interface Announcement {
   title: string;
   content: string;
   date: Date;
-  category?: string; // e.g., "Group Needs", "Training", "Event"
+  category?: string; 
 }
 
 export type MeetingDay = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
@@ -53,7 +69,7 @@ export interface FocusCategory {
   key: FocusCategoryKey;
   name: string;
   icon: LucideIcon;
-  color: string; // Tailwind color class or HSL string
+  color: string; 
   description?: string;
 }
 
@@ -66,3 +82,11 @@ export interface FilterOptions {
   meetingType?: MeetingType;
   childcare?: "yes" | "no" | "any";
 }
+
+// Optional: Define GroupCategory enum if it's different from FocusCategoryKey
+// export enum GroupCategory {
+//   Faith = "Faith",
+//   Community = "Community",
+//   Support = "Support",
+//   // ... other categories
+// }
