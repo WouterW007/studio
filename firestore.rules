@@ -19,17 +19,18 @@ service cloud.firestore {
     // - Authenticated users can read accepted group documents (application will filter by status).
     // - Admins can read, update, and delete any group document.
     match /groups/{groupId} {
-      allow read: if request.auth != null;
+      allow list: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true; // Allow admins to list all groups
+      allow read: if request.auth != null; // Allow authenticated users to read individual groups
       // create is not allowed directly into groups, only via admin approval process
       allow update, delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
     // Pending Groups collection:
     // - ANY user (authenticated or not) can create pending group documents.
-    // - Admins can read, update, and delete pending group documents.
+    // - Admins can read, list, update, and delete pending group documents.
     match /pendingGroups/{pendingGroupId} {
       allow create: if true;
-      allow read, update, delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+      allow read, list, update, delete: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
     }
 
     // Announcements collection:

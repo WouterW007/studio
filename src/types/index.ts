@@ -18,7 +18,7 @@ export interface Group {
   currentMembers: number; // For display like "8/10 spots"
   description?: string;
   expiryDate?: Date;
-  status: "pending" | "approved" | "declined"; // For admin
+  status: "pending" | "active" | "rejected"; // For admin - Standardized
   image?: string; // Optional image URL for the group
 }
 
